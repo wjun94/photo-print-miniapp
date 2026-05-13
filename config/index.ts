@@ -3,6 +3,19 @@ import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 import devConfig from './dev'
 import prodConfig from './prod'
 
+const dotenv = require('dotenv');
+const path = require('path');
+const variableExpansion = require('dotenv-expand');
+
+// 读取.env配置文件
+const env = dotenv.config();
+variableExpansion.expand(env);
+
+const targetEnv = {};
+Object.keys(env.parsed).forEach(item => {
+  targetEnv[item] = `"${env.parsed[item]}"`;
+});
+
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
   const baseConfig: UserConfigExport<'webpack5'> = {
@@ -22,6 +35,10 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
       "@tarojs/plugin-generator"
     ],
     defineConstants: {
+      ...targetEnv
+    },
+    alias: {
+      '@': path.resolve(__dirname, '..', 'src'),
     },
     copy: {
       patterns: [
