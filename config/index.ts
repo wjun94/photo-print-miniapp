@@ -18,6 +18,7 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
     sourceRoot: 'src',
     outputRoot: 'dist',
     plugins: [
+      ['@dcasia/mini-program-tailwind-webpack-plugin/dist/taro', {}],
       "@tarojs/plugin-generator"
     ],
     defineConstants: {
