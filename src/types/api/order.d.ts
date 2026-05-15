@@ -7,7 +7,7 @@ declare namespace ORDER {
     | "cancelled";
   type CreateReq = {
     token: string;
-    user_id: number;
+    userId: number;
   };
   type CreateItem = {
     imageUrl: string
@@ -21,16 +21,15 @@ declare namespace ORDER {
     spec: string;
     quantity: number;
     price: number;
-    image_url?: string;
   }
   type List = {
     id: number;
-    order_no: string;
-    user_id: number;
-    total_amount: number;
+    orderNo: string;
+    userId: number;
+    totalAmount: number;
     status: OrderStatus;
     address: string;
-    created_at: string;
+    createdAt: string;
     items?: OrderItem[];
   }
 }

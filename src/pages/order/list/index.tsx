@@ -46,14 +46,14 @@ export default function OrderList() {
               onClick={() => goToDetail(order.id)}
             >
               <View className='flex justify-between mb-2'>
-                <View className='text-gray-600 text-sm'>订单号：{order.order_no}</View>
+                <View className='text-gray-600 text-sm'>订单号：{order.orderNo}</View>
                 <View className={`text-sm ${order.status === 'pending' ? 'text-orange-500' : 'text-green-600'}`}>
                   {statusText(order.status)}
                 </View>
               </View>
               <View className='flex justify-between mb-1'>
-                <View>总金额：¥{order.total_amount.toFixed(2)}</View>
-                <View className='text-gray-400 text-xs'>{new Date(order.created_at).toLocaleDateString()}</View>
+                <View>总金额：¥{order.totalAmount.toFixed(2)}</View>
+                <View className='text-gray-400 text-xs'>{new Date(order.createdAt).toLocaleDateString()}</View>
               </View>
               <View className='text-gray-500 text-sm truncate'>地址：{order.address}</View>
             </View>
