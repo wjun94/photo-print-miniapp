@@ -51,8 +51,7 @@ export default function Upload() {
       const batchPlaceholders = placeholders.slice(i, i + concurrency)
       const promises = batch.map((file, idx) => uploadFile(file.path).then(res => ({
         ...batchPlaceholders[idx],
-        id: res.id,
-        image_url: res.image_url,
+        image_url: res.url,
         status: 'success' as const
       })).catch(err => ({
         ...batchPlaceholders[idx],

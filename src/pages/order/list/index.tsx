@@ -2,15 +2,13 @@ import { View, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useState } from 'react'
 import { orderList } from '@/api/order'
-import type { Order } from '@/types'
 import { useRequest } from 'ahooks'
 
 export default function OrderList() {
-  const [orders, setOrders] = useState<Order[]>([])
+  const [orders, setOrders] = useState<ORDER.List[]>([])
 
   const { loading } = useRequest(orderList, {
     onSuccess: (data) => {
-      console.log(data)
       setOrders(data?.list)
     }
   })
@@ -21,8 +19,8 @@ export default function OrderList() {
     Taro.navigateTo({ url: `/pages/order/detail/index?id=${id}` })
   }
 
-  const statusText = (status: Order['status']) => {
-    const map: Record<Order['status'], string> = {
+  const statusText = (status: ORDER.List['status']) => {
+    const map: Record<ORDER.List['status'], string> = {
       pending: '待处理',
       paid: '已支付',
       processing: '处理中',

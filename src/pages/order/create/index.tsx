@@ -6,7 +6,6 @@ import { SPECS, PRICES } from '@/constants'
 import { Image } from '@/components'
 
 interface OrderPhotoItem {
-  photoId: number
   imageUrl: string
   spec: string
   quantity: number
@@ -15,29 +14,27 @@ interface OrderPhotoItem {
 
 export default function CreateOrder() {
   const router = useRouter()
-  const { photoIds, photoUrls } = router.params
+  const { photoUrls } = router.params
 
   const [items, setItems] = useState<OrderPhotoItem[]>([])
   const [address, setAddress] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    if (!photoIds || !photoUrls) {
+    if (!photoUrls) {
       Taro.showToast({ title: '请先上传照片', icon: 'none' })
       setTimeout(() => Taro.navigateBack(), 1500)
       return
     }
-    const ids = photoIds.split(',').map(Number)
     const urls = decodeURIComponent(photoUrls).split(',')
-    const initialItems = ids.map((id, idx) => ({
-      photoId: id,
-      imageUrl: urls[idx],
+    const initialItems = urls.map((img) => ({
+      imageUrl: img,
       spec: SPECS[0],
       quantity: 1,
       price: PRICES[SPECS[0]]
     }))
     setItems(initialItems)
-  }, [photoIds, photoUrls])
+  }, [photoUrls])
 
   const updateItem = (index: number, field: keyof OrderPhotoItem, value: any) => {
     const newItems = [...items]
@@ -56,7 +53,7 @@ export default function CreateOrder() {
     setSubmitting(true)
     try {
       const orderItems: ORDER.CreateItem[] = items.map(item => ({
-        photo_id: item.photoId,
+        imageUrl: item.imageUrl,
         spec: item.spec,
         quantity: item.quantity,
         price: item.price
@@ -78,7 +75,7 @@ export default function CreateOrder() {
   return (
     <View className='p-4 min-h-screen bg-gray-100'>
       {items.map((item, idx) => (
-        <View key={item.photoId} className='bg-white rounded-lg p-4 mb-4'>
+        <View key={item.imageUrl} className='bg-white rounded-lg p-4 mb-4'>
           <View className='text-lg font-bold mb-2'>照片 {idx + 1}</View>
           <Image
             src={item.imageUrl}

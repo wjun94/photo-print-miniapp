@@ -2,7 +2,7 @@ import request from "./request";
 
 /** 订单列表 */
 export const orderList = (data) => {
-  return request<ORDER.CreateItem[]>({
+  return request<{ list: ORDER.List[] }>({
     url: '/orders/wx',
     method: 'GET',
     data: data as ORDER.CreateReq
