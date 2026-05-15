@@ -7,7 +7,6 @@ export async function silentLogin() {
     const { code } = await Taro.login();
     const data = await wxLogin({ code });
     useAuthStore.getState().setToken(data.token);
-    useAuthStore.getState().setUserId(data.user_id);
     return data;
   } catch (err) {
     console.error("Login failed", err);

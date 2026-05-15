@@ -11,6 +11,11 @@ declare module '*.scss';
 declare module '*.sass';
 declare module '*.styl';
 
+// 在这里声明你在 defineConstants 里定义的所有变量
+/** 接口请求地址 */
+declare const API_BASE: string;
+declare const IMG_CDN: string;
+
 declare namespace NodeJS {
   interface ProcessEnv {
     /** NODE 内置环境变量, 会影响到最终构建生成产物 */

@@ -22,9 +22,9 @@ export default function Index() {
         <Button className='bg-blue-500 text-white py-3 rounded-lg' onClick={() => navigate('/pages/upload/index')}>
           上传照片
         </Button>
-        <Button className='bg-green-500 text-white py-3 rounded-lg' onClick={() => navigate('/pages/order/create/index')}>
+        {/* <Button className='bg-green-500 text-white py-3 rounded-lg' onClick={() => navigate('/pages/order/create/index')}>
           创建订单
-        </Button>
+        </Button> */}
         <Button className='bg-purple-500 text-white py-3 rounded-lg' onClick={() => navigate('/pages/order/list/index')}>
           我的订单
         </Button>

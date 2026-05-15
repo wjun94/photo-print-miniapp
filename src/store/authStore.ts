@@ -50,7 +50,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: () => {
     Taro.removeStorageSync("token");
-    Taro.removeStorageSync("userId");
     set({ token: null, userId: null, userInfo: null });
     Taro.reLaunch({ url: "/pages/index/index" });
   },
