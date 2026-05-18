@@ -14,7 +14,7 @@ declare module '*.styl';
 // 在这里声明你在 defineConstants 里定义的所有变量
 /** 接口请求地址 */
 declare const API_BASE: string;
-declare const IMG_CDN: string;
+declare const STATIC_BASE_URL: string;
 
 declare namespace NodeJS {
   interface ProcessEnv {

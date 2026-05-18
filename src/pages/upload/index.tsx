@@ -2,78 +2,61 @@ import { View, Button, ScrollView } from '@tarojs/components'
 import { Image } from '@/components'
 import Taro from '@tarojs/taro'
 import { useState } from 'react'
-import { uploadFile } from '@/utils/upload'
+import { uploadMultiImages } from '@/utils/upload'
 
-interface UploadedPhoto {
-  id: number
-  image_url: string
-  status: 'uploading' | 'success' | 'fail'
+interface PhotoItem {
+  id: string          // 临时本地ID，用于删除和渲染
+  url: string         // 渲染使用的路径：初始为本地临时路径，上传成功后替换为服务器URL
+  status: 'local' | 'uploading' | 'success' | 'fail'
 }
 
 export default function Upload() {
-  const [photos, setPhotos] = useState<UploadedPhoto[]>([])
+  const [photos, setPhotos] = useState<PhotoItem[]>([])
+  const [isUploading, setIsUploading] = useState(false)
 
-  // 选择照片（多选）
+  // 1. 选择照片（纯本地保存，不触发上传）
   const handleChooseImages = () => {
+    const remaining = 9 - photos.length
+    if (remaining <= 0) {
+      Taro.showToast({ title: '最多上传9张照片', icon: 'none' })
+      return
+    }
+
     Taro.chooseImage({
-      count: 9, // 最多9张
+      count: remaining,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
-      success: async (res) => {
+      success: (res) => {
         const tempFiles = res.tempFiles
-        // 限制总数量（已有+新选不超过9）
-        const remaining = 9 - photos.length
-        const toUpload = tempFiles.slice(0, remaining)
-        if (toUpload.length === 0) {
-          Taro.showToast({ title: `最多上传9张照片`, icon: 'none' })
-          return
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+        // 1. 检查是否有文件超过大小限制
+        const hasOversized = tempFiles.some(file => file.size > MAX_SIZE);
+        if (hasOversized) {
+          Taro.showToast({
+            title: '单张图片大小不能超过 10MB',
+            icon: 'none'
+          });
+          return; // 直接拦截，不进行后续的 setPhotos
         }
-        // 添加占位项（上传中状态）
-        const newPhotos: UploadedPhoto[] = toUpload.map((file, idx) => ({
-          id: -Date.now() - idx, // 临时负ID
-          image_url: file.path,
-          status: 'uploading'
-        }))
-        setPhotos([...photos, ...newPhotos])
 
-        // 并发上传（限制同时5个）
-        await uploadMultiple(toUpload, newPhotos)
+        const newPhotos: PhotoItem[] = tempFiles.map((file, idx) => ({
+          id: `local-${Date.now()}-${idx}-${Math.random().toString(36).substr(2, 4)}`,
+          url: file.path,
+          status: 'local'
+        }))
+
+        setPhotos(prev => [...prev, ...newPhotos])
       }
     })
   }
 
-  // 并发上传控制
-  const uploadMultiple = async (files: Taro.chooseImage.ImageFile[], placeholders: UploadedPhoto[]) => {
-    const concurrency = 5
-    const results: UploadedPhoto[] = []
-    for (let i = 0; i < files.length; i += concurrency) {
-      const batch = files.slice(i, i + concurrency)
-      const batchPlaceholders = placeholders.slice(i, i + concurrency)
-      const promises = batch.map((file, idx) => uploadFile(file.path).then(res => ({
-        ...batchPlaceholders[idx],
-        image_url: res.url,
-        status: 'success' as const
-      })).catch(err => ({
-        ...batchPlaceholders[idx],
-        status: 'fail' as const,
-        error: err.message
-      })))
-      const batchResults = await Promise.all(promises)
-      results.push(...batchResults)
-      // 实时更新状态
-      setPhotos(prev => {
-        const newList = [...prev]
-        for (let j = 0; j < batchResults.length; j++) {
-          const idx = newList.findIndex(p => p.id === batchPlaceholders[j].id)
-          if (idx !== -1) newList[idx] = batchResults[j]
-        }
-        return newList
-      })
+  // 2. 删除照片
+  const handleDelete = (index: number, e: any) => {
+    e.stopPropagation()
+    if (isUploading) {
+      Taro.showToast({ title: '正在上传中，请稍候', icon: 'none' })
+      return
     }
-  }
-
-  // 删除照片
-  const handleDelete = (index: number) => {
     Taro.showModal({
       title: '提示',
       content: '确定删除这张照片吗？',
@@ -85,60 +68,117 @@ export default function Upload() {
     })
   }
 
-  // 去下单（至少选择一张成功的照片）
-  const goToOrder = () => {
-    const successPhotos = photos.filter(p => p.status === 'success')
-    if (successPhotos.length === 0) {
-      Taro.showToast({ title: '请至少上传一张照片', icon: 'none' })
+  // 3. 点击“去下单”（统一触发上传并跳转）
+  const handleOrderSubmit = async () => {
+    const pendingPhotos = photos.filter(p => p.status !== 'success')
+
+    // 如果全部都已经成功了，直接走跳转逻辑
+    if (pendingPhotos.length === 0 && photos.length > 0) {
+      navigateToOrder(photos)
       return
     }
-    const photoIds = successPhotos.map(p => p.id)
-    const photoUrls = successPhotos.map(p => p.image_url)
+
+    setIsUploading(true)
+    Taro.showLoading({ title: '正在上传图片...', mask: true })
+
+    const filePaths = pendingPhotos.map(p => p.url)
+
+    // 将整体状态更新为“上传中”
+    setPhotos(prev => prev.map(p => p.status === 'local' ? { ...p, status: 'uploading' } : p))
+
+    // 这里的 response 明确为 string[]
+    const response = await uploadMultiImages(filePaths)
+
+    let serverDataIdx = 0
+    const updatedPhotos = photos.map(p => {
+      // 只更新本次参与上传（状态为 uploading 或 fail）的图片
+      if (p.status !== 'success') {
+        const serverUrl = response[serverDataIdx++]
+        return {
+          ...p,
+          status: serverUrl.includes("/upload") ? 'success' as const : 'fail' as const,
+          url: serverUrl || p.url // 上传成功后，将本地临时路径替换为服务器真实 URL
+        }
+      }
+      return p
+    })
+    setPhotos(updatedPhotos)
+    Taro.hideLoading()
+    setIsUploading(false)
+
+    // 携带最新的服务器 URL 列表跳转
+    navigateToOrder(updatedPhotos)
+  }
+
+  // 4. 跳转下单页封装
+  const navigateToOrder = (allPhotos: PhotoItem[]) => {
+    // 过滤出所有上传成功的服务器 URL
+    const successPhotoUrls = allPhotos
+      .filter(p => p.status === 'success')
+      .map(p => p.url)
+    if (!successPhotoUrls.length) {
+      Taro.showToast({ title: '请上传图片', icon: 'none' })
+      return
+    }
     Taro.navigateTo({
-      url: `/pages/order/create/index?photoIds=${photoIds.join(',')}&photoUrls=${encodeURIComponent(photoUrls.join(','))}`
+      url: `/pages/order/create/index?photoUrls=${encodeURIComponent(successPhotoUrls.join(','))}`
     })
   }
 
   return (
-    <View className='p-4 min-h-screen bg-gray-100'>
-      <View className='bg-white rounded-lg p-4 mb-4'>
-        <View className='text-lg font-bold mb-2'>上传照片</View>
-        <View className='text-gray-500 text-sm mb-4'>支持 JPG/PNG，单张不超过5MB，最多9张</View>
+    <View className="p-4 min-h-screen bg-gray-100">
+      {/* 上传控制卡片 */}
+      <View className="bg-white rounded-xl p-4 mb-4">
+        <View className="text-lg font-bold mb-2 text-gray-800">上传照片</View>
+        <View className="text-gray-400 text-sm mb-4">
+          支持 JPG/PNG，最多9张（当前已选 {photos.length}/9）
+        </View>
         <Button
-          className='bg-blue-500 text-white py-2 rounded-lg'
+          className={`w-full border-none transition-colors ${photos.length >= 9
+            ? 'bg-gray-300 text-white'
+            : 'bg-blue-500 text-white active:bg-blue-600'
+            }`}
           onClick={handleChooseImages}
-          disabled={photos.length >= 9}
+          disabled={photos.length >= 9 || isUploading}
         >
           {photos.length >= 9 ? '已达上限' : '选择照片（可多选）'}
         </Button>
       </View>
 
+      {/* 照片预览区域 */}
       {photos.length > 0 && (
-        <ScrollView className='bg-white rounded-lg p-4' scrollY style={{ maxHeight: '70vh' }}>
-          <View className='text-md font-bold mb-2'>已上传照片</View>
-          <View className='grid grid-cols-3 gap-2'>
+        <ScrollView className="bg-white rounded-xl p-4" scrollY>
+          <View className="text-base font-bold mb-3 text-gray-800">已选照片</View>
+
+          {/* Grid 布局：一行三列 */}
+          <View className="grid grid-cols-3 gap-2">
             {photos.map((photo, idx) => (
-              <View key={photo.id} className='relative'>
+              <View key={photo.id} className="relative h-28 w-full">
                 <Image
-                  src={photo.image_url}
-                  className='w-full h-32 object-cover rounded-lg'
-                  mode='aspectFill'
+                  src={photo.url}
+                  className="w-full h-full rounded-lg object-cover"
+                  mode="aspectFill"
                 />
+
+                {/* 删除按钮 */}
                 <View
-                  className='absolute top-1 right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs'
-                  onClick={() => handleDelete(idx)}
-                  style={{ lineHeight: '24px', textAlign: 'center' }}
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs z-10 active:opacity-80"
+                  onClick={(e) => handleDelete(idx, e)}
                 >
                   ×
                 </View>
+
+                {/* 上传中遮罩 */}
                 {photo.status === 'uploading' && (
-                  <View className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg'>
-                    <View className='text-white text-xs'>上传中...</View>
+                  <View className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+                    <View className="text-white text-xs">上传中...</View>
                   </View>
                 )}
+
+                {/* 失败遮罩 */}
                 {photo.status === 'fail' && (
-                  <View className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg'>
-                    <View className='text-white text-xs'>失败</View>
+                  <View className="absolute inset-0 bg-red-500 bg-opacity-60 flex items-center justify-center rounded-lg">
+                    <View className="text-white text-xs font-medium">失败(重试)</View>
                   </View>
                 )}
               </View>
@@ -147,11 +187,19 @@ export default function Upload() {
         </ScrollView>
       )}
 
-      {photos.some(p => p.status === 'success') && (
-        <Button className='bg-green-500 text-white py-3 rounded-lg mt-4' onClick={goToOrder}>
-          去下单（{photos.filter(p => p.status === 'success').length}张）
+      {/* 固定到底部的去下单按钮 */}
+      <View className="mt-6 px-1">
+        <Button
+          className={`w-full rounded-lg py-1 transition-all ${photos.length === 0
+            ? 'bg-gray-200 text-gray-400'
+            : 'bg-emerald-500 text-white active:bg-emerald-600 shadow-md'
+            }`}
+          onClick={handleOrderSubmit}
+          disabled={photos.length === 0 || isUploading}
+        >
+          {isUploading ? '正在提交...' : `去下单 (${photos.length}张)`}
         </Button>
-      )}
+      </View>
     </View>
   )
 }
