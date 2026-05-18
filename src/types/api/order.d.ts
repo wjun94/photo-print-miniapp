@@ -17,7 +17,7 @@ declare namespace ORDER {
   }
   type OrderItem = {
     id: number;
-    imageUrl: number;
+    imageUrl: string;
     spec: string;
     quantity: number;
     price: number;

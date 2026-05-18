@@ -5,6 +5,8 @@ export default defineAppConfig({
     'pages/upload/index',
     // 创建订单
     'pages/order/create/index',
+    // 订单详情
+    'pages/order/detail/index',
     // 订单列表
     'pages/order/list/index',
   ],

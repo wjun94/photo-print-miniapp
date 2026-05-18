@@ -17,3 +17,11 @@ export const createOrder = (data) => {
     data: data as ORDER.CreateReq
   })
 };
+
+/** 订单详情 */
+export const getOrder = (id) => {
+  return request({
+    url: `/orders/${id}`,
+    method: 'GET',
+  })
+};
