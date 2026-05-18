@@ -26,7 +26,6 @@ declare namespace ORDER {
     id: number;
     orderNo: string;
     userId: number;
-    totalAmount: number;
     status: OrderStatus;
     address: string;
     createdAt: string;

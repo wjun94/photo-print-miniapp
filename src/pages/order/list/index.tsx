@@ -13,8 +13,6 @@ export default function OrderList() {
     }
   })
 
-
-
   const goToDetail = (id: number) => {
     Taro.navigateTo({ url: `/pages/order/detail/index?id=${id}` })
   }
@@ -32,7 +30,6 @@ export default function OrderList() {
 
   return (
     <View className='p-4 min-h-screen bg-gray-100'>
-      <View className='text-xl font-bold mb-4'>我的订单</View>
       {loading ? (
         <View className='text-center py-10'>加载中...</View>
       ) : orders.length === 0 ? (
@@ -52,7 +49,6 @@ export default function OrderList() {
                 </View>
               </View>
               <View className='flex justify-between mb-1'>
-                <View>总金额：¥{order.totalAmount.toFixed(2)}</View>
                 <View className='text-gray-400 text-xs'>{new Date(order.createdAt).toLocaleDateString()}</View>
               </View>
               <View className='text-gray-500 text-sm truncate'>地址：{order.address}</View>

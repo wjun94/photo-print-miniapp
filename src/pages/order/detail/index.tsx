@@ -64,9 +64,6 @@ export default function OrderDetail() {
             </View>
           </View>
         ))}
-        <View className='flex justify-end mt-3 font-bold'>
-          <View>合计：¥{order.totalAmount.toFixed(2)}</View>
-        </View>
       </View>
 
       <View className='bg-white rounded-lg p-4'>

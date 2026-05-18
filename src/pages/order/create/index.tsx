@@ -105,7 +105,6 @@ export default function CreateOrder() {
         <View className='text-lg font-bold mb-2'>收货信息</View>
         <Textarea
           placeholder='请填写详细地址'
-          value={address}
           onInput={(e) => setAddress(e.detail.value)}
           className='border rounded-lg p-2 bg-gray-50 min-h-[80px]'
         />
