@@ -10,16 +10,18 @@ type P = {
   /** 图片预览多张 */
   urls?: string[]
   current?: string
+  // 尺寸参数
+  imageView2?: number
 }
 
-export default ({ src, cdn, preview, current, urls, mode = 'aspectFill', ...props }: Omit<ImageProps, 'preview'> & P) => {
+export default ({ src, cdn, preview, imageView2 = 750, current, urls, mode = 'aspectFill', ...props }: Omit<ImageProps, 'preview'> & P) => {
   let finallySrc = src || '';
   if (cdn) {
     finallySrc = getImageCdnUrl(src)
   } else {
     finallySrc = getImageUrl(src)
   }
-
+  finallySrc += `?imageView2/1/w/${imageView2}`
   return <Image
     onClick={() => preview && previewImage({ urls: urls?.map(item => getImageUrl(item)) || [finallySrc], current: getImageUrl(current || '') || finallySrc })}
     src={finallySrc}

@@ -1,5 +1,6 @@
-import { View, Button, Image } from '@tarojs/components'
+import { View, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
+import { getImageCdnUrl } from '@/utils'
 
 export default function Index() {
 
@@ -8,12 +9,14 @@ export default function Index() {
   }
 
   return (
-    <View className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <View className='w-full max-w-md bg-white rounded-lg shadow-md p-6 mb-4'>
-        <Image
-          src='https://via.placeholder.com/150?text=Photo+Print'
-          className='w-32 h-32 mx-auto mb-4 rounded-full'
-        />
+    <View className='flex flex-col items-center  min-h-screen p-4 bg-gray-100'>
+      <View
+        className='w-full h-400px max-w-md bg-white rounded-lg shadow-md p-6 mb-4'
+        style={{
+          background: `url(${getImageCdnUrl("home.jpg")})`,
+          backgroundSize: 'cover'
+        }}
+      >
         <View className='text-2xl font-bold text-center mb-2'>照片打印商城</View>
         <View className='text-gray-500 text-center mb-6'>上传照片，在线下单打印</View>
       </View>

@@ -1,10 +1,12 @@
 /** cdn图片域名地址 */
 export function getImageCdnUrl(url: string): string {
-  return url ? `${STATIC_BASE_URL}/ygtk/${url}` : '';
+  return url
+    ? `${STATIC_BASE_URL}/img/${url}?imageView2/4/w/200/h/200`
+    : "";
 }
 
 /** 接口返回的图片域名地址 */
-export function getImageUrl(url = '') {
+export function getImageUrl(url = "") {
   if (!url) return url;
-  return url.startsWith('http') ? url : `${STATIC_BASE_URL}` + url;
+  return url.startsWith("http") ? url : `${STATIC_BASE_URL}` + url;
 }
