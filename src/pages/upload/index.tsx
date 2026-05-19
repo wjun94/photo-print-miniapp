@@ -23,7 +23,8 @@ export default function Upload() {
 
     Taro.chooseImage({
       count: remaining,
-      sizeType: ['compressed'],
+      // sizeType: ['compressed', 'original'],
+      sizeType: ['original'],
       sourceType: ['album', 'camera'],
       success: (res) => {
         const tempFiles = res.tempFiles
@@ -132,7 +133,7 @@ export default function Upload() {
         <View className="p-5">
           <View className="flex items-center justify-between mb-2">
             <View className="text-base font-semibold text-gray-800">照片选择</View>
-            <View className="text-xs text-gray-500 bg-gray-50 px-3 py-1 rounded-lg">
+            <View className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
               已选 {photos.length}/9
             </View>
           </View>
@@ -156,8 +157,8 @@ export default function Upload() {
       {photos.length > 0 && (
         <View className="mx-4 mb-6">
           <View className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-            <View className="p-5">
-              <View className="flex items-center justify-between mb-4">
+            <View className="px-5 py-2">
+              <View className="flex items-center justify-between mb-2">
                 <View className="text-base font-semibold text-gray-800">已选照片</View>
                 <View className="text-xs text-gray-500">点击图片可裁剪</View>
               </View>
@@ -174,7 +175,7 @@ export default function Upload() {
                           src={photo.url}
                           className="w-full h-full object-cover"
                           mode="aspectFill"
-                          onClick={() => Taro.navigateTo({ url: '/pages/cropper/index' })}
+                          onClick={() => Taro.navigateTo({ url: `/pages/cropper/index?url=${encodeURIComponent(photo.url)}` })}
                         />
                       </View>
 
@@ -185,7 +186,7 @@ export default function Upload() {
                         onClick={(e) => handleDelete(idx, e)}
                         catchMove
                       >
-                        <Text className="text-white text-lg font-bold leading-none ml-1.5 -mt-1.5">×</Text>
+                        <Text className="text-white text-lg font-bold leading-none ml-1 -mt-1">×</Text>
                       </View>
 
                       {/* 上传中遮罩 */}
@@ -215,7 +216,7 @@ export default function Upload() {
       <View className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-3 bg-white border-t border-gray-100">
         <Button
           className={`w-full rounded-lg py-4 font-semibold text-base shadow-md transition-all ${photos.length === 0
-            ? 'bg-gray-200 text-gray-400'
+            ? 'bg-gray-200 !text-gray-500'
             : 'bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.99]'
             }`}
           onClick={handleOrderSubmit}

@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { View, Text } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useRouter } from '@tarojs/taro';
 import { ImageCropper } from '@/components';
 
 const CropPage = () => {
-  const [imageSrc, setImageSrc] = useState<string>('');
+  const { params: { url: routerUrl } } = useRouter()
+  const [imageSrc, setImageSrc] = useState<string>(decodeURIComponent(routerUrl || ''));
   const cropperRef = useRef<any>(null);
 
   const handleSelectImage = async () => {
