@@ -73,7 +73,7 @@ export default function CreateOrder() {
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
 
   return (
-    <View className='p-4 min-h-screen bg-gray-100'>
+    <View className='p-4 min-h-screen'>
       {items.map((item, idx) => (
         <View key={item.imageUrl} className='bg-white rounded-lg p-4 mb-4'>
           <View className='text-lg font-bold mb-2'>照片 {idx + 1}</View>

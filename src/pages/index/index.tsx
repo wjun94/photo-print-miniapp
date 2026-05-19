@@ -1,6 +1,7 @@
-import { View, Button } from '@tarojs/components'
+import { View, Button, Image, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { getImageCdnUrl } from '@/utils'
+import GalleryPng from '@/assets/img/gallery.png'
 import './index.less'
 
 export default function Index() {
@@ -24,8 +25,8 @@ export default function Index() {
 
         {/* 内容区 - 垂直居中 + 柔和动画 */}
         <View className='relative z-10 flex flex-col items-center justify-center h-64 px-4 text-center animate-fade-in'>
-          <View className='text-3xl font-bold text-white mb-2 drop-shadow-lg tracking-wide'>
-            📸 照片打印商城
+          <View className='text-3xl font-bold text-white mb-2 drop-shadow-lg tracking-wide flex items-center'>
+            <Image className='h-60px w-60px mr-12px' src={GalleryPng} /> <Text>照片打印商城</Text>
           </View>
           <View className='text-white/90 text-base mb-1 drop-shadow'>
             上传照片 · 在线下单 · 极速送达
@@ -40,7 +41,7 @@ export default function Index() {
           onClick={() => navigate('/pages/upload/index')}
           hoverClass='opacity-90'
         >
-          📤 上传照片
+          <Text className="iconfont icon-upload !text-40px" /> 上传照片
         </Button>
 
         <Button
@@ -48,7 +49,7 @@ export default function Index() {
           onClick={() => navigate('/pages/order/create/index')}
           hoverClass='opacity-90'
         >
-          🛒 创建订单
+          <Text className="iconfont icon-create-order !text-40px" /> 创建订单
         </Button>
 
         <Button
@@ -56,7 +57,7 @@ export default function Index() {
           onClick={() => navigate('/pages/order/list/index')}
           hoverClass='opacity-90'
         >
-          📦 我的订单
+          <Text className="iconfont icon-order !text-40px" /> 我的订单
         </Button>
       </View>
 

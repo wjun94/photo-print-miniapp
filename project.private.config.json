@@ -7,11 +7,18 @@
     "miniprogram": {
       "list": [
         {
-          "name": "裁剪照片",
-          "pathName": "pages/cropper/index",
+          "name": "订单列表",
+          "pathName": "pages/order/list/index",
           "query": "",
           "scene": null,
           "launchMode": "default"
+        },
+        {
+          "name": "裁剪照片",
+          "pathName": "pages/cropper/index",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         }
       ]
     }
