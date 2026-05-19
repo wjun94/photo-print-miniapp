@@ -158,6 +158,7 @@ export default function Upload() {
                   src={photo.url}
                   className="w-full h-full rounded-lg object-cover"
                   mode="aspectFill"
+                  onClick={() => Taro.navigateTo({ url: '/pages/cropper/index' })}
                 />
 
                 {/* 删除按钮 */}

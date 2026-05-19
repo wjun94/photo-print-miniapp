@@ -9,6 +9,8 @@ export default defineAppConfig({
     'pages/order/detail/index',
     // 订单列表
     'pages/order/list/index',
+    // 编辑照片
+    'pages/cropper/index',
   ],
   window: {
     backgroundTextStyle: 'light',
