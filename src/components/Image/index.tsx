@@ -23,7 +23,7 @@ export default ({ src, cdn, preview, imageView2 = 750, current, urls, mode = 'as
   }
   finallySrc += `?imageView2/1/w/${imageView2}`
   return <Image
-    onClick={() => preview && previewImage({ urls: urls?.map(item => getImageUrl(item)) || [finallySrc], current: getImageUrl(current || '') || finallySrc })}
+    onClick={() => preview && previewImage({ urls: urls ? urls?.map(item => getImageUrl(item)) : [finallySrc], current: getImageUrl(current || '') || finallySrc })}
     src={finallySrc}
     mode={mode}
     {...props}
