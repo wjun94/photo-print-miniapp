@@ -26,7 +26,10 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
     isMultiTouch: false
   });
 
-  // 1. 初始化：计算裁剪框尺寸，并加载图片真实宽高
+  // 屏幕尺寸（用于遮罩计算）
+  const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
+
+  // 1. 初始化：获取屏幕尺寸、计算裁剪框，并加载图片真实宽高
   useEffect(() => {
     const sysInfo = Taro.getSystemInfoSync();
     const maxW = sysInfo.windowWidth * 0.85;
@@ -48,6 +51,7 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
       top: Math.max(20, offsetTop) 
     };
     setCropBox(box);
+    setScreenSize({ width: sysInfo.windowWidth, height: sysInfo.windowHeight });
 
     // 获取图片真实宽高，计算类似 aspectFill 的初始底图大小
     Taro.getImageInfo({
@@ -199,30 +203,89 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
     }
   };
 
+  // 计算遮罩层尺寸（四个方向）
+  const renderMasks = () => {
+    if (!cropBox.width || !screenSize.width) return null;
+    
+    const { left, top, width, height } = cropBox;
+    const { width: screenW, height: screenH } = screenSize;
+    
+    return (
+      <>
+        {/* 顶部遮罩 */}
+        <View 
+          className="fixed bg-black/60 pointer-events-none"
+          style={{
+            left: 0,
+            top: 0,
+            width: `${screenW}px`,
+            height: `${top}px`,
+            zIndex: 10
+          }}
+        />
+        {/* 底部遮罩 */}
+        <View 
+          className="fixed bg-black/60 pointer-events-none"
+          style={{
+            left: 0,
+            top: `${top + height}px`,
+            width: `${screenW}px`,
+            height: `${screenH - top - height}px`,
+            zIndex: 10
+          }}
+        />
+        {/* 左侧遮罩 */}
+        <View 
+          className="fixed bg-black/60 pointer-events-none"
+          style={{
+            left: 0,
+            top: `${top}px`,
+            width: `${left}px`,
+            height: `${height}px`,
+            zIndex: 10
+          }}
+        />
+        {/* 右侧遮罩 */}
+        <View 
+          className="fixed bg-black/60 pointer-events-none"
+          style={{
+            left: `${left + width}px`,
+            top: `${top}px`,
+            width: `${screenW - left - width}px`,
+            height: `${height}px`,
+            zIndex: 10
+          }}
+        />
+      </>
+    );
+  };
+
   return (
     <View 
-      className="absolute w-full h-full left-0 top-0 overflow-hidden"
+      className="fixed w-full h-full left-0 top-0 overflow-hidden"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={() => { gesture.current.isMultiTouch = false; }}
     >
-      {/* 
-        1. 裁剪框外部遮罩 
-        由于图片要在裁剪框外隐藏，我们把半透明遮罩层单独剥离出来放在最底层
-      */}
-      <View className="absolute w-full h-full" />
+      {/* 半透明遮罩层：裁剪框外部区域变暗，突出选中区域 */}
+      {renderMasks()}
 
       {/* 
-        2. 图片展示区（核心：overflow-hidden 实现超出部分隐藏）
-        加上 border-2 border-solid border-blue-500 实现蓝色实线边框
+        图片展示区（核心：overflow-hidden 实现超出部分隐藏）
+        增强的蓝色边框 + 外发光效果，突出“选中照片”的视觉反馈
       */}
       <View 
-        className="absolute overflow-hidden border-2 border-solid border-blue-500 box-border"
+        className="absolute overflow-hidden"
         style={{
           width: `${cropBox.width}px`,
           height: `${cropBox.height}px`,
           left: `${cropBox.left}px`,
           top: `${cropBox.top}px`,
+          border: '4px solid #3b82f6', // 加粗蓝色边框
+          boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.3), 0 0 0 6px rgba(59, 130, 246, 0.2), 0 8px 20px rgba(0,0,0,0.3)', // 多层次外发光
+          borderRadius: '2px', // 轻微圆角，更精致
+          zIndex: 20, // 确保边框显示在遮罩之上
+          boxSizing: 'border-box'
         }}
       >
         <View className="relative w-full h-full flex items-center justify-center pointer-events-none">
@@ -241,16 +304,15 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
         </View>
 
         {/* 
-          3. 内部红色虚线 
-          绝对定位在蓝色实线框内部，覆盖在图片上。
-          pointer-events-none 确保不阻挡手势。
+          内部辅助虚线框（增强构图的辅助线，保留优化样式）
         */}
         <View 
-          className="absolute inset-0 border-[2px] border-dashed border-red-500 pointer-events-none opacity-80"
-          style={{ margin: '-2px' }} // 抵消父元素的2px border，或者可以设置inset为正值往内收缩
+          className="absolute inset-0 border-[2px] border-dashed border-white/60 pointer-events-none"
+          style={{ margin: '-2px' }}
         />
       </View>
 
+      {/* 隐藏的Canvas用于导出裁剪图片 */}
       <Canvas
         canvasId="cropCanvas"
         className="absolute pointer-events-none"
