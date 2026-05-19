@@ -2,5 +2,18 @@
   "libVersion": "3.15.2",
   "setting": {
     "urlCheck": false
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "裁剪照片",
+          "pathName": "pages/cropper/index",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        }
+      ]
+    }
   }
 }

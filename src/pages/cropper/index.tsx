@@ -73,10 +73,10 @@ const CropPage = () => {
   return (
     <View className="flex flex-col h-screen bg-zinc-950 select-none">
       {/* 顶部栏 */}
-      <View className="pt-12 pb-4 px-6 flex justify-between items-center bg-zinc-900 border-b border-zinc-800 z-50">
-        <Text className="text-white text-base font-bold">智能打印裁剪框</Text>
+      <View className="fixed top-0 left-0 w-750px py-20px flex justify-between items-center bg-zinc-900 border-b border-zinc-800 z-50">
+        <Text className="text-white text-base font-bold ml-6">智能打印裁剪框</Text>
         <View
-          className="bg-blue-600 px-4 py-1.5 rounded-full active:opacity-80"
+          className="bg-blue-600 px-4 py-1.5 rounded-full active:opacity-80 mr-6"
           onClick={handleSelectImage}
         >
           <Text className="text-xs text-white font-medium">选择原图</Text>
