@@ -191,7 +191,7 @@ export default function Upload() {
       <View className="mt-6 px-1">
         <Button
           className={`w-full rounded-lg py-1 transition-all ${photos.length === 0
-            ? 'bg-gray-200 text-gray-400'
+            ? 'bg-gray-500 text-gray-400'
             : 'bg-emerald-500 text-white active:bg-emerald-600 shadow-md'
             }`}
           onClick={handleOrderSubmit}
