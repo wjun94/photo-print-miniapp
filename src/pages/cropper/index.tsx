@@ -26,7 +26,7 @@ const CropPage = () => {
     try {
       await Taro.saveImageToPhotosAlbum({ filePath });
       Taro.showToast({ title: '已成功保存至相册', icon: 'success' });
-    } catch (err) {
+    } catch (err: any) {
       // 检查是否是用户拒绝了相册权限
       if (err.errMsg.includes('auth deny') || err.errMsg.includes('auth denied')) {
         Taro.showModal({

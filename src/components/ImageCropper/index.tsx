@@ -30,7 +30,7 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
   useEffect(() => {
     const sysInfo = Taro.getSystemInfoSync();
     const maxW = sysInfo.windowWidth * 0.85;
-    const maxH = sysInfo.windowHeight * 0.6;
+    const maxH = sysInfo.windowHeight * 0.55; 
     
     let w = maxW;
     let h = w / aspectRatio;
@@ -38,11 +38,14 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
       h = maxH;
       w = h * aspectRatio;
     }
+
+    const offsetTop = (sysInfo.windowHeight - h) / 2 - (sysInfo.windowHeight * 0.12);
+
     const box = {
       width: w,
       height: h,
       left: (sysInfo.windowWidth - w) / 2,
-      top: (sysInfo.windowHeight - h) / 2 - 20
+      top: Math.max(20, offsetTop) 
     };
     setCropBox(box);
 
@@ -203,9 +206,18 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
       onTouchMove={onTouchMove}
       onTouchEnd={() => { gesture.current.isMultiTouch = false; }}
     >
-      {/* 1. 图片展示层（依据计算出来的 baseWidth / baseHeight 渲染） */}
+      {/* 
+        1. 裁剪框外部遮罩 
+        由于图片要在裁剪框外隐藏，我们把半透明遮罩层单独剥离出来放在最底层
+      */}
+      <View className="absolute w-full h-full" />
+
+      {/* 
+        2. 图片展示区（核心：overflow-hidden 实现超出部分隐藏）
+        加上 border-2 border-solid border-blue-500 实现蓝色实线边框
+      */}
       <View 
-        className="absolute flex items-center justify-center"
+        className="absolute overflow-hidden border-2 border-solid border-blue-500 box-border"
         style={{
           width: `${cropBox.width}px`,
           height: `${cropBox.height}px`,
@@ -213,33 +225,32 @@ const ImageCropper = forwardRef((props: IProps, ref) => {
           top: `${cropBox.top}px`,
         }}
       >
-        {imgInfo.current.baseWidth > 0 && (
-          <Image
-            src={src}
-            className="absolute origin-center will-change-transform"
-            style={{
-              width: `${imgInfo.current.baseWidth}px`,
-              height: `${imgInfo.current.baseHeight}px`,
-              transform: `translate3d(${imgState.x}px, ${imgState.y}px, 0) scale(${imgState.scale}) rotate(${imgState.rotate}deg)`,
-            }}
-            mode="scaleToFill" // 改为铺满计算出的基准容器
-          />
-        )}
+        <View className="relative w-full h-full flex items-center justify-center pointer-events-none">
+          {imgInfo.current.baseWidth > 0 && (
+            <Image
+              src={src}
+              className="absolute origin-center will-change-transform"
+              style={{
+                width: `${imgInfo.current.baseWidth}px`,
+                height: `${imgInfo.current.baseHeight}px`,
+                transform: `translate3d(${imgState.x}px, ${imgState.y}px, 0) scale(${imgState.scale}) rotate(${imgState.rotate}deg)`,
+              }}
+              mode="scaleToFill"
+            />
+          )}
+        </View>
+
+        {/* 
+          3. 内部红色虚线 
+          绝对定位在蓝色实线框内部，覆盖在图片上。
+          pointer-events-none 确保不阻挡手势。
+        */}
+        <View 
+          className="absolute inset-0 border-[2px] border-dashed border-red-500 pointer-events-none opacity-80"
+          style={{ margin: '-2px' }} // 抵消父元素的2px border，或者可以设置inset为正值往内收缩
+        />
       </View>
 
-      {/* 2. 虚线框与半透明遮罩层（处于图片前端 z-50） */}
-      <View 
-        className="absolute border-2 border-dashed border-blue-400 shadow-[0_0_0_2000px_rgba(9,9,11,0.85)] z-50"
-        style={{
-          width: `${cropBox.width}px`,
-          height: `${cropBox.height}px`,
-          left: `${cropBox.left}px`,
-          top: `${cropBox.top}px`,
-          pointerEvents: 'none' // 允许触摸事件穿透
-        }}
-      />
-
-      {/* 离屏 Canvas */}
       <Canvas
         canvasId="cropCanvas"
         className="absolute pointer-events-none"
