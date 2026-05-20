@@ -7,11 +7,18 @@
     "miniprogram": {
       "list": [
         {
-          "name": "订单列表",
-          "pathName": "pages/order/list/index",
+          "name": "我的",
+          "pathName": "pages/mine/index",
           "query": "",
           "scene": null,
           "launchMode": "default"
+        },
+        {
+          "name": "订单列表",
+          "pathName": "pages/order/list/index",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "裁剪照片",
