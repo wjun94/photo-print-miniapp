@@ -57,7 +57,7 @@ const ScrollLoadList = <T = any>(props: ScrollLoadListProps<T>) => {
         immediate = true,
         emptyText = '暂无数据',
         loadingMoreText = '加载中...',
-        noMoreText = '没有更多了',
+        noMoreText = '—— 已全部加载 ——',
         errorText = '加载失败，点击重试',
         renderHeader,
         renderFooter,
