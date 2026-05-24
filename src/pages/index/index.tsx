@@ -1,7 +1,9 @@
-import { View, Image, Text } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { getImageCdnUrl } from '@/utils'
 import GalleryPng from '@/assets/img/gallery.png'
+import { ScrollLoadList, Image } from '@/components'
+import { products } from '@/api/product'
 import './index.less'
 
 export default function Index() {
@@ -9,36 +11,8 @@ export default function Index() {
     Taro.navigateTo({ url })
   }
 
-  // 模拟热门产品数据
-  const hotProducts = [
-    {
-      id: 1,
-      title: '标准尺寸打印',
-      desc: '多种尺寸可选',
-      img: 'standard_print.png', // 替换为真实的图片CDN地址
-    },
-    {
-      id: 2,
-      title: '拍立得照片',
-      desc: '复古边框打印',
-      img: 'polaroid.png',
-    },
-    {
-      id: 3,
-      title: '海报打印',
-      desc: '高清海报定制',
-      img: 'poster.png',
-    },
-    {
-      id: 4,
-      title: '照片书',
-      desc: '记录美好时光',
-      img: 'photobook.png',
-    },
-  ]
-
   return (
-    <View className='min-h-screen bg-[#fafafa] pb-8'>
+    <View className='min-h-screen bg-[#fafafa] pb-2'>
       {/* 主视觉卡片 - 优化视觉重心与文字可读性 */}
       <View className='px-4'>
         <View
@@ -93,43 +67,44 @@ export default function Index() {
       </View>
 
       {/* 3. 热门冲印产品模块 */}
-      <View className='px-4 mt-7'>
+      <View className='px-4 mt-4'>
         {/* 模块标题 */}
         <View className='text-lg font-bold text-[#333333] mb-4 tracking-wide'>
           热门冲印产品
         </View>
 
         {/* 2x2 产品网格布局 */}
-        <View className='grid grid-cols-2 gap-3'>
-          {hotProducts.map((item) => (
-            <View
-              key={item.id}
-              onClick={() => navigate(`/pages/product/detail?id=${item.id}`)}
-              className='bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col active:opacity-95'
-            >
-              {/* 产品大图区域 */}
-              <View className='w-full h-32 bg-[#f5f5f5] flex items-center justify-center overflow-hidden'>
-                <Image
-                  src={getImageCdnUrl(item.img)}
-                  className='w-full h-full object-cover'
-                />
-              </View>
 
-              {/* 产品文字信息 */}
-              <View className='p-3 flex flex-col bg-white'>
-                <Text className='text-sm font-medium text-[#222222]'>{item.title}</Text>
-                <Text className='text-xs text-[#999999] mt-1'>{item.desc}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      </View>
+        <ScrollLoadList
+          request={products}
+          numColumns={2}
+          columnGap={12}   // 列间距 12px
+          rowGap={16}      // 行间距 16px
+          masonry
+          renderItem={
+            (item) => (
+              <View
+                key={item.id}
+                onClick={() => navigate(`/pages/detail?id=${item.id}`)}
+                className='bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col active:opacity-95'
+              >
+                {/* 产品大图区域 */}
+                <View className='w-full h-36 bg-[#f5f5f5] flex items-center justify-center overflow-hidden'>
+                  <Image
+                    src={item.coverImage}
+                    className='w-full h-full object-cover'
+                  />
+                </View>
 
-      {/* 4. 底部轻量提示 */}
-      <View className='mt-8 flex items-center justify-center gap-1.5 text-gray-300 text-xs'>
-        <View className='w-1 h-1 rounded-full bg-gray-200' />
-        <Text>未登录将自动为您创建临时账号</Text>
-        <View className='w-1 h-1 rounded-full bg-gray-200' />
+                {/* 产品文字信息 */}
+                <View className='p-2 flex flex-col bg-white'>
+                  <Text className='text-[#222222] line-clamp-2 overflow-hidden'>{item.name}</Text>
+                  <Text className='text-30px font-bold text-red-400 mt-1'>￥{item.price}<Text className="text-22px ml-1 font-400 text-gray-400">{item.priceSuffix}</Text></Text>
+                </View>
+              </View>
+            )
+          }
+        />
       </View>
     </View>
   )

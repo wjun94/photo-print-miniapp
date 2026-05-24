@@ -3,6 +3,8 @@ const imgUrl = "./assets/tabbar/";
 export default defineAppConfig({
   pages: [
     "pages/index/index",
+    // 商品详情
+    "pages/detail/index",
     // 上传照片
     "pages/upload/index",
     // 创建订单
