@@ -85,7 +85,7 @@ export default function Index() {
             (item) => (
               <View
                 key={item.id}
-                onClick={() => navigate(`/pages/detail?id=${item.id}`)}
+                onClick={() => navigate(`/pages/detail/index?id=${item.id}`)}
                 className='bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col active:opacity-95'
               >
                 {/* 产品大图区域 */}
@@ -99,7 +99,7 @@ export default function Index() {
                 {/* 产品文字信息 */}
                 <View className='p-2 flex flex-col bg-white'>
                   <Text className='text-[#222222] line-clamp-2 overflow-hidden'>{item.name}</Text>
-                  <Text className='text-30px font-bold text-red-400 mt-1'>￥{item.price}<Text className="text-22px ml-1 font-400 text-gray-400">{item.priceSuffix}</Text></Text>
+                  <Text className='text-30px font-bold text-red-400 mt-1'><Text className="text-22px">￥</Text>{item.price}<Text className="text-22px ml-1 font-400 text-gray-400">{item.priceSuffix}</Text></Text>
                 </View>
               </View>
             )

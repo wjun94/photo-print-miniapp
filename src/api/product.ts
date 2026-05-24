@@ -8,3 +8,11 @@ export const products = (data) => {
     data: data as ORDER.CreateReq,
   });
 };
+
+/** 订单详情 */
+export const getProducts = (id) => {
+  return request<PRODUCT.Detail>({
+    url: `/products/${id}`,
+    method: "GET",
+  });
+};
