@@ -17,6 +17,10 @@ export default defineAppConfig({
     "pages/cropper/index",
     // 我的
     "pages/mine/index",
+    // 我的地址
+    'pages/address/list/index',
+    // 编辑地址
+    'pages/address/edit/index'
   ],
   // 底部 TabBar 配置
   tabBar: {

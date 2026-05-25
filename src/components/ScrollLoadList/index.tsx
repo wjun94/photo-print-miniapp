@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { ScrollView, View, Text } from '@tarojs/components'
 import type { ScrollViewProps } from '@tarojs/components'
 
@@ -9,7 +9,7 @@ export interface RequestResult<T> {
 
 export interface ScrollLoadListProps<T = any> {
   request: (page: number, pageSize: number) => Promise<RequestResult<T>> | any
-  renderItem: (item: T, index: number) => React.ReactNode
+  renderItem: (item: T | any, index: number) => React.ReactNode
   pageSize?: number
   initialPage?: number
   immediate?: boolean
@@ -22,7 +22,7 @@ export interface ScrollLoadListProps<T = any> {
   renderEmpty?: () => React.ReactNode
   renderError?: () => React.ReactNode
   renderLoadMoreIndicator?: () => React.ReactNode
-  keyExtractor?: (item: T, index: number) => string
+  keyExtractor?: (item: T | any, index: number) => string
   lowerThreshold?: number
   scrollViewProps?: Omit<ScrollViewProps, 'onScrollToLower' | 'onRefresherRefresh' | 'refresherTriggered' | 'refresherEnabled'>
   className?: string
@@ -37,7 +37,11 @@ export interface ScrollLoadListProps<T = any> {
   masonry?: boolean
 }
 
-const ScrollLoadList = <T = any>(props: ScrollLoadListProps<T>) => {
+export interface ScrollLoadListRef {
+  refresh: () => void
+}
+
+const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: React.Ref<ScrollLoadListRef>) => {
   const {
     request,
     renderItem,
@@ -114,6 +118,16 @@ const ScrollLoadList = <T = any>(props: ScrollLoadListProps<T>) => {
       }
     }
   }, [request, pageSize, loadingMore])
+
+  // 对外暴露的刷新方法
+  const refresh = useCallback(() => {
+    if (refreshing || loadingMore) return
+    loadData(initialPage, true)
+  }, [refreshing, loadingMore, initialPage, loadData])
+
+  useImperativeHandle(ref, () => ({
+    refresh
+  }), [refresh])
 
   // 初始加载
   useEffect(() => {
@@ -296,6 +310,9 @@ const ScrollLoadList = <T = any>(props: ScrollLoadListProps<T>) => {
       {showEmpty && renderEmptyContent()}
     </ScrollView>
   )
-}
+})
+
+// 添加 displayName 便于调试
+ScrollLoadList.displayName = 'ScrollLoadList'
 
 export default ScrollLoadList

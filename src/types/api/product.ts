@@ -1,6 +1,6 @@
 declare namespace PRODUCT {
   // 商品规格
-  export interface ProductSpec {
+  export interface Spec {
     id: string;
     name: string; // 规格名称，如 "6寸"
     price: number;
@@ -10,7 +10,7 @@ declare namespace PRODUCT {
   }
 
   // 商品详情
-  export interface ProductDetail {
+  export interface Detail {
     id: string;
     name: string;
     coverImage: string;
@@ -21,6 +21,6 @@ declare namespace PRODUCT {
     sortOrder: number;
     createdAt: string;
     updatedAt: string;
-    specs: ProductSpec[];
+    specs: Spec[];
   }
 }
