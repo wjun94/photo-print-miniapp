@@ -22,7 +22,7 @@ export const getAddressDetail = (id) => {
 
 /** 更新地址信息 */
 export const updateAddress = (id, data) => {
-  return request<null>({ url: `/addresse/${id}`, method: 'PUT', data })
+  return request<null>({ url: `/address/${id}`, method: 'PUT', data })
 };
 
 /** 新建地址信息 */

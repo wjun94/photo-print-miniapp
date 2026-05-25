@@ -102,9 +102,9 @@ export default function RegionPickerPopup({
       <View className='absolute inset-0 bg-black bg-opacity-50' onClick={onCancel} />
       <View className='absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl'>
         <View className='flex justify-between items-center p-4 border-b'>
-          <View className='text-gray-500' onClick={onCancel}>取消</View>
+          <View className='text-gray-500 text-30px' onClick={onCancel}>取消</View>
           <View className='text-lg font-bold'>选择地区</View>
-          <View className='text-red-500' onClick={handleConfirm}>确定</View>
+          <View className='text-primary-400 text-30px' onClick={handleConfirm}>确定</View>
         </View>
         <PickerView
           indicatorStyle='height: 40px;'

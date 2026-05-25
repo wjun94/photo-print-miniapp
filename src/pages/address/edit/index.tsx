@@ -131,67 +131,105 @@ export default function AddressEdit() {
   }
 
   return (
-    <View className='min-h-screen bg-gray-100 p-4'>
-      <View className='bg-white rounded-lg p-4'>
-        <View className='mb-4'>
-          <View className='text-gray-700 mb-1'>收货人</View>
-          <Input
-            className='border rounded p-2'
-            placeholder='请输入收货人姓名'
-            value={form.receiverName}
-            onInput={e => setForm({ ...form, receiverName: e.detail.value })}
-          />
-        </View>
-        <View className='mb-4'>
-          <View className='text-gray-700 mb-1'>手机号码</View>
-          <Input
-            className='border rounded p-2'
-            placeholder='请输入手机号码'
-            type='number'
-            value={form.mobile}
-            onInput={e => setForm({ ...form, mobile: e.detail.value })}
-          />
+    <View className='bg-[#F7F8FA] p-4 flex flex-col justify-between pb-10'>
+      <View className='flex-1'>
+        {/* 第一部分：核心表单信息卡片 */}
+        <View className='bg-white rounded-2xl px-4 py-1 mb-3 shadow-sm'>
+          {/* 收货人 */}
+          <View className='flex items-center py-4 border-b border-gray-100/70'>
+            <View className='w-24 leading-[1] text-gray-800 flex-shrink-0'>收货人</View>
+            <Input
+              className='flex-1 text-gray-900 p-0 bg-transparent'
+              placeholder='请输入收货人姓名'
+              placeholderClass='text-gray-300'
+              value={form.receiverName}
+              onInput={e => setForm({ ...form, receiverName: e.detail.value })}
+            />
+          </View>
+
+          {/* 手机号码 */}
+          <View className='flex items-center py-4 border-b border-gray-100/70'>
+            <View className='w-24 leading-[1] text-gray-800 flex-shrink-0'>手机号码</View>
+            <Input
+              className='flex-1 text-gray-900 p-0 bg-transparent'
+              placeholder='请输入手机号码'
+              placeholderClass='text-gray-300'
+              type='number'
+              value={form.mobile}
+              onInput={e => setForm({ ...form, mobile: e.detail.value })}
+            />
+          </View>
+
+          {/* 所在地区 */}
+          <View className='flex items-center py-4 border-b border-gray-100/70 justify-between'>
+            <View className='w-24 leading-[1] text-gray-800 flex-shrink-0'>所在地区</View>
+            <View className='flex-1 flex items-center justify-between overflow-hidden'>
+              <RegionPicker
+                value={{
+                  provinceId: region.provinceId,
+                  cityId: region.cityId,
+                  districtId: region.districtId
+                }}
+                onChange={(newRegion) => setRegion(newRegion)}
+              />
+              <Text className='text-gray-400 text-lg font-light ml-2 flex-shrink-0'>›</Text>
+            </View>
+          </View>
+
+          {/* 详细地址 */}
+          <View className='py-3.5 border-b border-gray-100/70'>
+            <View className='text-gray-800 mb-1.5'>详细地址</View>
+            <View className='flex items-start justify-between'>
+              <Textarea
+                className='flex-1 text-gray-900 h-14 p-0 bg-transparent leading-relaxed'
+                placeholder='街道、楼号、门牌号'
+                placeholderClass='text-gray-300'
+                value={form.detail}
+                onInput={e => setForm({ ...form, detail: e.detail.value })}
+              />
+              {/* 右侧定位图标 */}
+              <View className='ml-3 pt-0.5 flex-shrink-0'>
+                <View className='w-5 h-5 flex items-center justify-center text-[#2F77F1]'>
+                  <svg viewBox='0 0 24 24' width='20' height='20' stroke='currentColor' strokeWidth='2' fill='none' strokeLinecap='round' strokeLinejoin='round'>
+                    <path d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'></path>
+                    <circle cx='12' cy='10' r='3'></circle>
+                  </svg>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* 门牌号 */}
+          <View className='flex items-center py-4'>
+            <View className='w-24 text-gray-800 flex-shrink-0'>门牌号</View>
+            <Input
+              className='flex-1 text-gray-900 p-0 bg-transparent'
+              placeholder='如大厦、楼层、房间号等（选填）'
+              placeholderClass='text-gray-300'
+              value={form.doorplate}
+              onInput={e => setForm({ ...form, doorplate: e.detail.value })}
+            />
+          </View>
         </View>
 
-        {/* 省市区选择器（使用 PickerView） */}
-        <View className='mb-4'>
-          <View className='text-gray-700 mb-1'>所在地区</View>
-          <RegionPicker
-            value={{
-              provinceId: region.provinceId,
-              cityId: region.cityId,
-              districtId: region.districtId
-            }}
-            onChange={(newRegion) => setRegion(newRegion)}
+        {/* 第二部分：默认地址独立卡片 */}
+        <View className='bg-white rounded-2xl px-4 py-3.5 flex justify-between items-center shadow-sm'>
+          <Text className='text-gray-800 font-medium'>设为默认地址</Text>
+          <Switch 
+            checked={form.isDefault} 
+            color='#2F77F1'
+            onChange={e => setForm({ ...form, isDefault: e.detail.value })} 
           />
         </View>
+      </View>
 
-        <View className='mb-4'>
-          <View className='text-gray-700 mb-1'>详细地址</View>
-          <Textarea
-            className='border rounded p-2'
-            placeholder='街道、楼号、门牌号'
-            value={form.detail}
-            onInput={e => setForm({ ...form, detail: e.detail.value })}
-          />
-        </View>
-        <View className='mb-4'>
-          <View className='text-gray-700 mb-1'>门牌号（选填）</View>
-          <Input
-            className='border rounded p-2'
-            placeholder='如大厦、楼层、房间号等'
-            value={form.doorplate}
-            onInput={e => setForm({ ...form, doorplate: e.detail.value })}
-          />
-        </View>
-        <View className='mb-6 flex justify-between items-center'>
-          <Text>设为默认地址</Text>
-          <Switch checked={form.isDefault} onChange={e => setForm({ ...form, isDefault: e.detail.value })} />
-        </View>
+      {/* 第三部分：底部悬浮/固定保存按钮 */}
+      <View className='px-2 mt-18'>
         <Button
-          className='bg-red-500 text-white rounded-full'
+          className='w-full h-12 flex items-center justify-center bg-primary-400 text-white text-base font-medium rounded-full active:opacity-90 shadow-lg shadow-blue-100'
           onClick={handleSubmit}
           disabled={loading}
+          style={{ border: 'none' }}
         >
           {loading ? '保存中...' : '保存地址'}
         </Button>
