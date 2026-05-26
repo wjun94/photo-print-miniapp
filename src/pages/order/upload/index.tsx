@@ -114,7 +114,7 @@ export default function Upload() {
       return
     }
     Taro.navigateTo({
-      url: `/pages/order/comfirm/index?photoUrls=${encodeURIComponent(successPhotoUrls.join(','))}`
+      url: `../confirm/index?photoUrls=${encodeURIComponent(successPhotoUrls.join(','))}`
     })
   }
 
