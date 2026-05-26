@@ -16,8 +16,9 @@ export default {
       backgroundSize: {
         'full': '100% 100%'
       }
-    }
+    },
   },
+  important: true, // 所有工具类自动加 !important
   corePlugins: {
     // 禁用掉在小程序环境中不可能用到的 plugins
     container: false

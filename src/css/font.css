@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 5180844 */
-  src: url('//at.alicdn.com/t/c/font_5180844_fy6b9xxjrbo.woff2?t=1779698213814') format('woff2'),
-       url('//at.alicdn.com/t/c/font_5180844_fy6b9xxjrbo.woff?t=1779698213814') format('woff'),
-       url('//at.alicdn.com/t/c/font_5180844_fy6b9xxjrbo.ttf?t=1779698213814') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_5180844_ey7ub12ut28.woff2?t=1779788235213') format('woff2'),
+       url('//at.alicdn.com/t/c/font_5180844_ey7ub12ut28.woff?t=1779788235213') format('woff'),
+       url('//at.alicdn.com/t/c/font_5180844_ey7ub12ut28.ttf?t=1779788235213') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-favorites-fill:before {
+  content: "\e683";
+}
+
+.icon-favorites:before {
+  content: "\e685";
+}
+
+.icon-none:before {
+  content: "\e684";
+}
+
+.icon-photo:before {
+  content: "\e67e";
+}
+
+.icon-camera:before {
+  content: "\e682";
+}
+
+.icon-doubt:before {
+  content: "\e67f";
+}
+
+.icon-coupon:before {
+  content: "\e680";
+}
+
+.icon-location:before {
+  content: "\e681";
+}
+
+.icon-shoye:before {
+  content: "\e67c";
 }
 
 .icon-delete:before {

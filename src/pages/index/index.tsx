@@ -43,26 +43,26 @@ export default function Index() {
         {/* 左侧：上传照片 */}
         <View
           onClick={() => navigate('/pages/upload/index')}
-          className='flex items-center justify-between h-24 px-4 rounded-2xl bg-[#5aa6f9] text-white active:opacity-90'
+          className='flex items-center flex-col justify-between p-4 rounded-2xl bg-[#5aa6f9] text-white active:opacity-90'
         >
-          <View className='flex flex-col justify-center'>
-            <Text className='text-lg font-bold tracking-wide'>上传照片</Text>
-            <Text className='text-xs opacity-80 mt-0.5'>快速上传照片</Text>
+          <Text className='iconfont icon-camera !text-60px opacity-90' />
+          <View className='flex flex-col items-center justify-center'>
+            <Text className='text-30px font-bold tracking-wide my-2'>上传照片</Text>
+            <Text className='text-24px opacity-80 mt-0.5'>快速上传照片</Text>
           </View>
           {/* 此处可用 iconfont 或真实图片替换 */}
-          <Text className='iconfont icon-camera text-4xl opacity-90' />
         </View>
 
         {/* 右侧：打印照片商品 */}
         <View
           onClick={() => navigate('/pages/products/index')}
-          className='flex items-center justify-between h-24 px-4 rounded-2xl bg-[#f2f7fd] text-black active:opacity-90'
+          className='flex items-center flex-col justify-between p-4 rounded-2xl bg-[#f2f7fd] text-black active:opacity-90'
         >
-          <View className='flex flex-col justify-center'>
-            <Text className='text-lg font-bold tracking-wide'>打印照片商品</Text>
-            <Text className='text-xs opacity-80 text-[#666] mt-0.5'>冲印精美照片</Text>
+          <Text className='iconfont icon-photo text-primary-400 text-55px opacity-90' />
+          <View className='flex flex-col items-center justify-center'>
+            <Text className='text-30px font-bold tracking-wide my-2'>打印照片商品</Text>
+            <Text className='text-24px opacity-80 text-[#666] mt-0.5'>冲印精美照片</Text>
           </View>
-          <Text className='iconfont icon-album text-4xl opacity-90' />
         </View>
       </View>
 

@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
-import { ScrollView, View, Text } from '@tarojs/components'
+import { ScrollView, View, Text, Image } from '@tarojs/components'
 import type { ScrollViewProps } from '@tarojs/components'
+import NonePng from '@/assets/img/none.png'
 
 export interface RequestResult<T> {
   list: T[]
@@ -199,8 +200,9 @@ const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: 
   const renderEmptyContent = () => {
     if (renderEmpty) return renderEmpty()
     return (
-      <View className="flex flex-col justify-center items-center py-20">
-        <Text className="text-gray-400 text-base">{emptyText}</Text>
+      <View className="flex flex-col justify-center items-center text-gray-400 py-20">
+        <Image mode="widthFix" className="w-180px" src={NonePng} />
+        <Text className="text-28px mt-24px">{emptyText}</Text>
       </View>
     )
   }
@@ -215,36 +217,36 @@ const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: 
   // 瀑布流样式 (CSS Columns)
   const masonryContainerStyle: React.CSSProperties = isMasonry
     ? {
-        columnCount: numColumns,
-        columnGap: columnGap,
-      }
+      columnCount: numColumns,
+      columnGap: columnGap,
+    }
     : {}
 
   const masonryItemStyle: React.CSSProperties = isMasonry
     ? {
-        breakInside: 'avoid',
-        marginBottom: rowGap,
-      }
+      breakInside: 'avoid',
+      marginBottom: rowGap,
+    }
     : {}
 
   // 普通网格样式 (flex)
   const gridContainerStyle: React.CSSProperties = isGrid
     ? {
-        display: 'flex',
-        flexWrap: 'wrap',
-        marginLeft: columnGap ? -columnGap / 2 : 0,
-        marginRight: columnGap ? -columnGap / 2 : 0,
-      }
+      display: 'flex',
+      flexWrap: 'wrap',
+      marginLeft: columnGap ? -columnGap / 2 : 0,
+      marginRight: columnGap ? -columnGap / 2 : 0,
+    }
     : {}
 
   const gridItemStyle: React.CSSProperties = isGrid
     ? {
-        width: `${100 / numColumns}%`,
-        paddingLeft: columnGap ? columnGap / 2 : 0,
-        paddingRight: columnGap ? columnGap / 2 : 0,
-        marginBottom: rowGap,
-        boxSizing: 'border-box',
-      }
+      width: `${100 / numColumns}%`,
+      paddingLeft: columnGap ? columnGap / 2 : 0,
+      paddingRight: columnGap ? columnGap / 2 : 0,
+      marginBottom: rowGap,
+      boxSizing: 'border-box',
+    }
     : {}
 
   return (

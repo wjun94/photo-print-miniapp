@@ -22,24 +22,23 @@ export default function My() {
   const menuItems = [
     { id: 'address', label: '地址管理', icon: 'icon-location', url: '/pages/address/list/index' },
     { id: 'coupon', label: '我的优惠券', icon: 'icon-coupon', url: '/pages/coupon/index' },
-    { id: 'favorite', label: '我的收藏', icon: 'icon-star', url: '/pages/favorite/index' },
-    { id: 'faq', label: '常见问题', icon: 'icon-question-circle', url: '/pages/faq/index' },
-    { id: 'about', label: '关于我们', icon: 'icon-info-circle', url: '/pages/about/index' },
+    { id: 'icon-favorites-fill', label: '我的收藏', icon: 'icon-favorites-fill', url: '/pages/favorite/index' },
+    { id: 'faq', label: '常见问题', icon: 'icon-doubt', url: '/pages/faq/index' },
   ]
 
   return (
     <View className='min-h-screen bg-[#f7f8fa] px-4 pt-6 pb-10 flex flex-col justify-between box-border'>
-      
+
       <View className='w-full'>
         {/* 1. 用户信息头部区域 */}
-        <View 
+        <View
           className='flex items-center justify-between mb-6 px-1 active:opacity-90'
           onClick={() => navigate('/pages/profile/index')}
         >
           <View className='flex items-center gap-4'>
             {/* 头像 */}
-            <Image 
-              src={defaultAvatar} 
+            <Image
+              src={defaultAvatar}
               className='w-16 h-16 rounded-full border-2 border-white bg-blue-50 shadow-sm'
             />
             {/* 昵称及签名 */}
@@ -57,7 +56,7 @@ export default function My() {
           {/* 卡片头部 */}
           <View className='flex justify-between items-center mb-5'>
             <Text className='text-base font-bold text-[#333333]'>我的订单</Text>
-            <View 
+            <View
               className='flex items-center gap-0.5 active:opacity-70'
               onClick={() => navigate('/pages/order/list/index?status=all')}
             >
@@ -69,8 +68,8 @@ export default function My() {
           {/* 状态网格五等分 */}
           <View className='grid grid-cols-5 gap-0'>
             {orderStates.map((item) => (
-              <View 
-                key={item.id} 
+              <View
+                key={item.id}
                 className='flex flex-col items-center gap-2 active:opacity-70'
                 onClick={() => navigate(`/pages/order/list/index?status=${item.id}`)}
               >
@@ -87,22 +86,19 @@ export default function My() {
         {/* 3. 菜单功能列表卡片 */}
         <View className='bg-white rounded-2xl px-4 py-1 shadow-sm border border-solid border-white flex flex-col'>
           {menuItems.map((item, index) => (
-            <View 
+            <View
               key={item.id}
               onClick={() => navigate(item.url)}
-              className={`flex items-center justify-between py-4 transition-colors duration-150 ${
-                index !== menuItems.length - 1 ? 'bb' : ''
-              }`}
+              className={`flex items-center justify-between py-4 transition-colors duration-150 ${index !== menuItems.length - 1 ? 'bb' : ''
+                }`}
             >
               {/* 左侧图标与文本 */}
               <View className='flex items-center gap-3'>
-                <View className='w-5 h-5 flex items-center justify-center text-[#3b82f6]'>
-                  <Text className={`iconfont ${item.icon} text-lg`} />
-                </View>
-                <Text className='text-sm text-[#333333] font-medium'>{item.label}</Text>
+                <Text style={{ fontSize: '44rpx' }} className={`iconfont ${item.icon} text-primary-400`} />
+                <Text className='text-[#333333] font-medium'>{item.label}</Text>
               </View>
               {/* 右侧箭头 */}
-              <Text className='iconfont icon-arrow-right text-[#cccccc] text-sm' />
+              <Text className='iconfont icon-next text-[#cccccc]' />
             </View>
           ))}
         </View>
@@ -110,7 +106,7 @@ export default function My() {
 
       {/* 4. 底部固定的在线客服按钮 */}
       <View className='w-full mt-8 px-1'>
-        <Button 
+        <Button
           openType='contact' // 微信小程序原生客服能力支持
           className='w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#3b82f6] to-[#4f46e5] text-white h-12 rounded-xl shadow-md active:shadow-sm active:scale-[0.99] transition-all duration-150 border-0 font-medium text-base'
         >
