@@ -25,3 +25,21 @@ export const getOrder = (id) => {
     method: "GET",
   });
 };
+
+/** 确认订单页面预览（获取商品信息、默认地址） */
+export const orderPreview = (data) => {
+  return request<any>({
+    url: "/order/preview",
+    method: "POST",
+    data: data as ORDER.CreateReq,
+  });
+};
+
+/** 提交订单 */
+export const orderSubmit = (data) => {
+  return request<any>({
+    url: "/order/submit",
+    method: "POST",
+    data: data as ORDER.CreateReq,
+  });
+};

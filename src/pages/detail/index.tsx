@@ -46,7 +46,7 @@ export default function () {
         closeSkuPopup()
         // 跳转到订单确认页，携带商品、规格、数量信息
         Taro.navigateTo({
-            url: `/pages/order/confirm/index?productId=${product!.id}&specId=${spec.id}&quantity=${quantity}`
+            url: `/pages/order/upload/index?productId=${product!.id}&specId=${spec.id}`
         })
     }
 

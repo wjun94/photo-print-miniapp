@@ -11,6 +11,10 @@ export default defineAppConfig({
     "pages/order/create/index",
     // 订单详情
     "pages/order/detail/index",
+    // 提交商品
+    "pages/order/upload/index",
+    // 确认订单页
+    "pages/order/confirm/index",
     // 订单列表
     "pages/order/list/index",
     // 编辑照片

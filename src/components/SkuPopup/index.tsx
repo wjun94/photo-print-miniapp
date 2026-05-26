@@ -84,14 +84,14 @@ export default function SkuPopup({ visible, product, selectedSpec, onClose, onCo
                 </View>
 
                 {/* 数量选择器 */}
-                <View className='mb-4'>
+                {/* <View className='mb-4'>
                     <View className='text-gray-700 mb-2'>数量</View>
                     <View className='flex items-center'>
                         <View className='w-8 h-8 border border-gray-300 rounded-l flex justify-center items-center' onClick={decrease}>-</View>
                         <Input type='number' value={String(quantity)} className='w-16 h-8 border-t border-b border-gray-300 text-center' onInput={e => setQuantity(Number(e.detail.value))} />
                         <View className='w-8 h-8 border border-gray-300 rounded-r flex justify-center items-center' onClick={increase}>+</View>
                     </View>
-                </View>
+                </View> */}
 
                 <Button className='bg-red-500 text-white rounded-full w-full' onClick={handleConfirm}>
                     确定

@@ -118,7 +118,7 @@ export default function CreateOrder() {
       </View>
 
       <Button
-        className='bg-blue-500 text-white py-3 rounded-lg'
+        className='bg-blue-500 text-white rounded-lg'
         onClick={handleSubmit}
         disabled={submitting}
       >
