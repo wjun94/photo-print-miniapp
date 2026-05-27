@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: { 400: '#2F77F1', },
+        primary: { 200: '#ecf3fd', 400: '#2F77F1', },
         text: { 200: '#b7b7b7', 300: '#999999', 400: '#888888', 500: '#666666', 600: '#323232', 700: '#787878' /** 标题主色号*/ }
       },
       backgroundSize: {

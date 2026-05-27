@@ -45,7 +45,7 @@ export default function Index() {
           onClick={() => navigate('/pages/upload/index')}
           className='flex items-center flex-col justify-between p-4 rounded-2xl bg-[#5aa6f9] text-white active:opacity-90'
         >
-          <Text className='iconfont icon-camera !text-60px opacity-90' />
+          <Text className='iconfont icon-camera-fill !text-60px opacity-90' />
           <View className='flex flex-col items-center justify-center'>
             <Text className='text-30px font-bold tracking-wide my-2'>上传照片</Text>
             <Text className='text-24px opacity-80 mt-0.5'>快速上传照片</Text>
@@ -58,7 +58,7 @@ export default function Index() {
           onClick={() => navigate('/pages/products/index')}
           className='flex items-center flex-col justify-between p-4 rounded-2xl bg-[#f2f7fd] text-black active:opacity-90'
         >
-          <Text className='iconfont icon-photo text-primary-400 text-55px opacity-90' />
+          <Text className='iconfont icon-photo text-primary-400 text-60px opacity-90' />
           <View className='flex flex-col items-center justify-center'>
             <Text className='text-30px font-bold tracking-wide my-2'>打印照片商品</Text>
             <Text className='text-24px opacity-80 text-[#666] mt-0.5'>冲印精美照片</Text>

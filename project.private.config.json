@@ -7,11 +7,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/order/upload/index",
+          "pathName": "pages/order/upload/index",
+          "query": "productId=2059476607822729216&specId=2059476646456463360",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "pages/address/list/index",
           "pathName": "pages/address/list/index",
           "query": "",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "我的",

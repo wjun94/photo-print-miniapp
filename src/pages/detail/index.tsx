@@ -3,7 +3,7 @@ import Taro, { useRouter } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import { getProducts } from '@/api/product'
 import SkuPopup from '@/components/SkuPopup'
-import { Image } from '@/components'
+import { Image, HtmlRender } from '@/components'
 
 export default function () {
     const router = useRouter()
@@ -61,10 +61,10 @@ export default function () {
             <ScrollView scrollX className='whitespace-nowrap'>
                 {product.bannerImages?.length ? (
                     product.bannerImages.map((img, idx) => (
-                        <Image key={idx} src={img} className='w-screen h-96 inline-block' mode='aspectFill' />
+                        <Image preview key={idx} src={img} className='w-screen h-96 inline-block' mode='aspectFill' />
                     ))
                 ) : (
-                    <Image src={product.coverImage} className='w-screen h-96' mode='aspectFill' />
+                    <Image preview src={product.coverImage} className='w-screen h-96' mode='aspectFill' />
                 )}
             </ScrollView>
 
@@ -90,7 +90,7 @@ export default function () {
             {/* 商品详情（富文本） */}
             <View className='bg-white mt-2 p-4'>
                 <View className='text-lg font-bold mb-2'>商品详情</View>
-                <View className='text-gray-600' dangerouslySetInnerHTML={{ __html: product.detail }} />
+                <HtmlRender dangerouslySetInnerHTML={{ __html: product.detail }} />
             </View>
 
             {/* 底部操作栏：仅“立即购买”按钮 */}

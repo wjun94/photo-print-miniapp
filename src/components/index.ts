@@ -4,4 +4,5 @@ export { default as ScrollLoadList } from './ScrollLoadList'
 export * from './ScrollLoadList'
 export { default as SkuPopup } from './SkuPopup'
 export { default as RegionPicker } from './RegionPicker'
+export { HtmlRender } from './HtmlRender'
 

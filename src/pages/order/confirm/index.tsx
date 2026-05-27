@@ -1,147 +1,140 @@
-import { View, Text, Image, Button } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import { View, Text, Button } from '@tarojs/components'
 import { useEffect, useState } from 'react'
+import { Image } from '@/components'
+import Taro from '@tarojs/taro'
 import { orderPreview, orderSubmit } from '@/api/order'
 
-interface PreviewData {
-    product: {
-        id: string
-        name: string
-        coverImage: string
-        description: string
-    }
-    spec: {
-        id: string
-        name: string
-        price: number
-        stock: number
-    }
-    quantity: number
-    totalAmount: number
-    address: {
-        id: string
-        receiverName: string
-        mobile: string
-        provinceName: string
-        cityName: string
-        districtName: string
-        detail: string
-        doorplate: string
-    } | null
-}
-
-export default function OrderConfirm() {
-    const router = useRouter()
-    const { productId, specId, quantity } = router.params
-    const [preview, setPreview] = useState<PreviewData | null>(null)
-    const [selectedAddressId, setSelectedAddressId] = useState<string>('')
-    const [submitting, setSubmitting] = useState(false)
+export default function ConfirmOrder() {
+    const params = Taro.getCurrentInstance().router?.params
+    const [items, setItems] = useState<ORDER.ItemRequest[]>([])
+    const [previewList, setPreviewList] = useState<ORDER.PreviewItem[]>([])
+    const [totalAmount, setTotalAmount] = useState(0)
+    const [selectedAddress, setSelectedAddress] = useState<ADDRESS.Items | null>(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (productId && specId && quantity) {
-            fetchPreview()
+        // 从上一页获取 items 数组（路由参数或全局状态）
+        if (params?.items) {
+            try {
+                const parsedItems = JSON.parse(params.items) as ORDER.ItemRequest[]
+                setItems(parsedItems)
+                fetchPreview(parsedItems)
+            } catch (e) {
+                Taro.showToast({ title: '参数错误', icon: 'none' })
+                Taro.navigateBack()
+            }
         } else {
-            Taro.showToast({ title: '参数错误', icon: 'none' })
-            setTimeout(() => Taro.navigateBack(), 1500)
+            Taro.showToast({ title: '请从商品页进入', icon: 'none' })
+            Taro.navigateBack()
         }
     }, [])
 
-    const fetchPreview = async () => {
+    // 监听地址选择结果（从地址列表页返回）
+    useEffect(() => {
+        const handler = (data: { address: ADDRESS.Items }) => {
+            setSelectedAddress(data.address)
+        }
+        Taro.eventCenter.on('addressSelected', handler)
+        return () => {
+            Taro.eventCenter.off('addressSelected', handler)
+        }
+    }, [])
+
+    const fetchPreview = async (items: ORDER.ItemRequest[]) => {
         try {
-            const data = await orderPreview({ productId, specId, quantity: parseInt(quantity || '0') })
-            setPreview(data)
-            if (data.address) {
-                setSelectedAddressId(data.address.id)
-            }
+            const res = await orderPreview({ items, productId: params?.productId, specId: params?.specId })
+            setPreviewList(res.items)
+            setTotalAmount(res.totalAmount)
+            setSelectedAddress(res.defaultAddress)
         } catch (err) {
             Taro.showToast({ title: '获取订单信息失败', icon: 'none' })
+        } finally {
+            setLoading(false)
         }
     }
 
     const chooseAddress = () => {
-        Taro.navigateTo({
-            url: '/pages/address/list?select=true',
-            events: {
-                acceptAddress: (address: any) => {
-                    setSelectedAddressId(address.id)
-                }
-            }
-        })
+        Taro.navigateTo({ url: '/pages/address/list?selectMode=true' })
     }
 
     const submitOrder = async () => {
-        if (!selectedAddressId) {
+        if (!selectedAddress) {
             Taro.showToast({ title: '请选择收货地址', icon: 'none' })
             return
         }
-        if (!preview) return
-        setSubmitting(true)
         try {
             const res = await orderSubmit({
-                addressId: selectedAddressId,
-                productId: preview.product.id,
-                specId: preview.spec.id,
-                quantity: preview.quantity
+                addressId: selectedAddress.id,
+                items: items
             })
             Taro.showToast({ title: '下单成功', icon: 'success' })
             setTimeout(() => {
                 Taro.redirectTo({ url: `/pages/order/detail/index?id=${res.orderId}` })
             }, 1500)
         } catch (err) {
-            Taro.showToast({ title: err.message || '下单失败', icon: 'none' })
-        } finally {
-            setSubmitting(false)
+            // 错误已在 request 中处理
         }
     }
 
-    if (!preview) return <View className='text-center py-10'>加载中...</View>
+    if (loading) {
+        return <View className='flex justify-center items-center h-screen'>加载中...</View>
+    }
 
     return (
-        <View className='bg-gray-100 min-h-screen p-4'>
+        <View className='bg-gray-100 min-h-screen pb-20'>
             {/* 地址卡片 */}
-            <View className='bg-white rounded-lg p-4 mb-3' onClick={chooseAddress}>
-                {preview.address && selectedAddressId ? (
+            <View className='bg-white mx-4 mt-4 rounded-lg p-4' onClick={chooseAddress}>
+                {selectedAddress ? (
                     <>
-                        <View className='flex justify-between'>
-                            <Text className='font-bold'>{preview.address.receiverName}</Text>
-                            <Text>{preview.address.mobile}</Text>
+                        <View className='flex justify-between mb-2'>
+                            <Text className='font-bold'>{selectedAddress.receiverName}</Text>
+                            <Text>{selectedAddress.mobile}</Text>
                         </View>
-                        <Text className='text-gray-500 text-sm mt-1'>
-                            {preview.address.provinceName} {preview.address.cityName} {preview.address.districtName} {preview.address.detail} {preview.address.doorplate}
-                        </Text>
+                        <View className='text-gray-600'>
+                            {selectedAddress.provinceName} {selectedAddress.cityName} {selectedAddress.districtName} {selectedAddress.detail} {selectedAddress.doorplate}
+                        </View>
                     </>
                 ) : (
-                    <View className='text-center py-2 text-blue-500'>请选择收货地址</View>
+                    <View className='text-center py-2 text-gray-400'>请选择收货地址</View>
                 )}
+                <View className='text-right text-gray-400 mt-2'>修改 &gt;</View>
             </View>
 
-            {/* 商品卡片 */}
-            <View className='bg-white rounded-lg p-3 flex'>
-                <Image src={preview.product.coverImage} className='w-24 h-24 rounded mr-3' mode='aspectFill' />
-                <View className='flex-1'>
-                    <Text className='font-bold'>{preview.product.name}</Text>
-                    <Text className='text-gray-500 text-sm mt-1'>规格：{preview.spec.name}</Text>
-                    <View className='flex justify-between mt-2'>
-                        <Text className='text-red-500'>¥{preview.spec.price}</Text>
-                        <Text>x{preview.quantity}</Text>
+            {/* 商品列表 */}
+            <View className='bg-white mx-4 mt-4 rounded-lg p-4'>
+                <View className='font-bold mb-2'>商品明细</View>
+                {previewList.map((item, idx) => (
+                    <View key={idx} className='flex py-2 border-b last:border-0'>
+                        <Image src={item.imageUrl} className='w-20 h-20 rounded-8px mr-3' mode='aspectFill' />
+                        <View className='flex-1'>
+                            <View className='flex justify-between'>
+                                <Text className='font-medium'>{item.productName}</Text>
+                                <Text>x{item.quantity}</Text>
+                            </View>
+                            <Text className='text-gray-500 text-sm'>规格：{item.specName}</Text>
+                            <View className='flex justify-between mt-1'>
+                                <Text className='text-red-500'>¥{item.price.toFixed(2)}</Text>
+                                <Text className='text-gray-400'>小计：¥{item.subtotal.toFixed(2)}</Text>
+                            </View>
+                        </View>
                     </View>
+                ))}
+            </View>
+
+            {/* 合计 */}
+            <View className='bg-white mx-4 mt-4 rounded-lg p-4'>
+                <View className='flex justify-between'>
+                    <Text>合计</Text>
+                    <Text className='text-red-500 font-bold'>¥{totalAmount.toFixed(2)}</Text>
                 </View>
             </View>
 
-            {/* 总价 */}
-            <View className='bg-white rounded-lg p-4 mt-3 flex justify-between'>
-                <Text>共{preview.quantity}件商品，合计：</Text>
-                <Text className='text-red-500 font-bold'>¥{preview.totalAmount.toFixed(2)}</Text>
-            </View>
-
             {/* 提交按钮 */}
-            <Button
-                className='bg-red-500 text-white py-3 rounded-full mt-6'
-                onClick={submitOrder}
-                disabled={submitting}
-            >
-                {submitting ? '提交中...' : '提交订单'}
-            </Button>
+            <View className='fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3'>
+                <Button className='bg-primary-400 text-white rounded-full w-full' onClick={submitOrder}>
+                    提交订单
+                </Button>
+            </View>
         </View>
     )
 }

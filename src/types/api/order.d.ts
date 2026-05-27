@@ -31,4 +31,20 @@ declare namespace ORDER {
     createdAt: string;
     items?: OrderItem[];
   }
+  export interface ItemRequest {
+    productId: string
+    specId: string
+    quantity: number
+  }
+
+  export interface PreviewItem {
+    productId: string
+    productName: string
+    specId: string
+    specName: string
+    price: number
+    quantity: number
+    subtotal: number
+    imageUrl: string
+  }
 }
