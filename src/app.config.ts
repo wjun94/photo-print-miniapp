@@ -22,9 +22,11 @@ export default defineAppConfig({
     // 我的
     "pages/mine/index",
     // 我的地址
-    'pages/address/list/index',
+    "pages/address/list/index",
     // 编辑地址
-    'pages/address/edit/index'
+    "pages/address/edit/index",
+    // 选择地址
+    "pages/address/select/index",
   ],
   // 底部 TabBar 配置
   tabBar: {

@@ -54,7 +54,7 @@ export default function AddressList() {
   })
 
   return (
-    <View className='min-h-screen bg-[#F7F8FA] p-4 pb-24'>
+    <View className='min-h-screen p-4 pb-24'>
       <ScrollLoadList
         ref={listRef}
         request={getAddressList}

@@ -1,7 +1,7 @@
 import { View, Text, Button } from '@tarojs/components'
 import { useEffect, useState } from 'react'
 import { Image } from '@/components'
-import Taro from '@tarojs/taro'
+import Taro, { eventCenter } from '@tarojs/taro'
 import { orderPreview, orderSubmit } from '@/api/order'
 
 export default function ConfirmOrder() {
@@ -26,6 +26,12 @@ export default function ConfirmOrder() {
         } else {
             Taro.showToast({ title: '请从商品页进入', icon: 'none' })
             Taro.navigateBack()
+        }
+        eventCenter.on("addres/select", (addr) => {
+            setSelectedAddress(addr)
+        })
+        return () => {
+            eventCenter.off("addres/select")
         }
     }, [])
 
@@ -54,7 +60,7 @@ export default function ConfirmOrder() {
     }
 
     const chooseAddress = () => {
-        Taro.navigateTo({ url: '/pages/address/list?selectMode=true' })
+        Taro.navigateTo({ url: `/pages/address/select/index?id=${selectedAddress?.id}` })
     }
 
     const submitOrder = async () => {
