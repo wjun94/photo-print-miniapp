@@ -44,7 +44,9 @@ declare namespace ORDER {
     specName: string
     price: number
     quantity: number
+    totalQuantity: number
     subtotal: number
+    totalSubtotal: number
     imageUrl: string
   }
 }

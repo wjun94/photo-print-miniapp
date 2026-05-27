@@ -43,7 +43,7 @@ export default function ConfirmOrder() {
     const fetchPreview = async (items: ORDER.ItemRequest[]) => {
         try {
             const res = await orderPreview({ items, productId: params?.productId, specId: params?.specId })
-            setPreviewList(res.items)
+            setPreviewList(res.specs || [])
             setTotalAmount(res.totalAmount)
             setSelectedAddress(res.defaultAddress)
         } catch (err) {
@@ -105,16 +105,16 @@ export default function ConfirmOrder() {
                 <View className='font-bold mb-2'>商品明细</View>
                 {previewList.map((item, idx) => (
                     <View key={idx} className='flex py-2 border-b last:border-0'>
-                        <Image src={item.imageUrl} className='w-20 h-20 rounded-8px mr-3' mode='aspectFill' />
+                        <Image src={item.imageUrl} className='w-20 h-20 border-1px border-solid border-gray-200 rounded-12px mr-3' mode='aspectFill' />
                         <View className='flex-1'>
                             <View className='flex justify-between'>
                                 <Text className='font-medium'>{item.productName}</Text>
-                                <Text>x{item.quantity}</Text>
+                                <Text>x{item.totalQuantity}</Text>
                             </View>
                             <Text className='text-gray-500 text-sm'>规格：{item.specName}</Text>
                             <View className='flex justify-between mt-1'>
                                 <Text className='text-red-500'>¥{item.price.toFixed(2)}</Text>
-                                <Text className='text-gray-400'>小计：¥{item.subtotal.toFixed(2)}</Text>
+                                <Text className='text-gray-400'>小计：¥{item.totalSubtotal.toFixed(2)}</Text>
                             </View>
                         </View>
                     </View>
