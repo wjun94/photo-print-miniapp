@@ -50,10 +50,10 @@ export default function AddressList() {
                             <View className='flex-shrink-0 mr-4 flex items-center justify-center'>
                                 {isCurrentSelected ? (
                                     // 选中状态：蓝色对勾圆圈
-                                    <Text className="iconfont icon-radio-selected text-42px text-primary-400" />
+                                    <Text className="iconfont icon-radio-selected text-44px text-primary-400" />
                                 ) : (
                                     // 未选中状态：灰色空心圆圈
-                                    <Text className="iconfont icon-radio text-42px" />
+                                    <Text className="iconfont icon-radio text-44px" />
                                 )}
                             </View>
 

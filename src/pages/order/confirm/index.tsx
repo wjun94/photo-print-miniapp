@@ -2,35 +2,80 @@ import { View, Text, Button, Input } from '@tarojs/components'
 import { useEffect, useState } from 'react'
 import { Image } from '@/components'
 import Taro from '@tarojs/taro'
+import { useRequest } from 'ahooks'
 import { orderPreview, orderSubmit } from '@/api/order'
 
 export default function ConfirmOrder() {
     const params = Taro.getCurrentInstance().router?.params
-    const [items, setItems] = useState<ORDER.ItemRequest[]>([])
-    const [previewList, setPreviewList] = useState<ORDER.PreviewItem[]>([])
-    const [totalAmount, setTotalAmount] = useState(0)
     const [selectedAddress, setSelectedAddress] = useState<ADDRESS.Items | null>(null)
-    const [loading, setLoading] = useState(true)
-    // 1. 新增买家留言的状态
     const [remark, setRemark] = useState('')
 
-    useEffect(() => {
-        // 从上一页获取 items 数组（路由参数或全局状态）
-        if (params?.items) {
-            try {
-                const parsedItems = JSON.parse(params.items) as ORDER.ItemRequest[]
-                setItems(parsedItems)
-                fetchPreview(parsedItems)
-            } catch (e) {
-                Taro.showToast({ title: '参数错误', icon: 'none' })
-                Taro.navigateBack()
+    // 解析路由参数中的 items
+    const getItemsParam = (): ORDER.ItemRequest[] => {
+        if (!params?.items) return []
+        try {
+            return JSON.parse(params.items) as ORDER.ItemRequest[]
+        } catch (e) {
+            return []
+        }
+    }
+    const items = getItemsParam()
+
+    // 1. 使用 useRequest 托管订单预览接口
+    const { data: previewData, loading: previewLoading } = useRequest(
+        () => orderPreview({
+            items,
+            productId: params?.productId,
+            specId: params?.specId
+        }),
+        {
+            ready: items.length > 0, // 只有当 items 解析成功时才触发请求
+            onSuccess: (res) => {
+                // 初始化默认地址
+                if (res?.defaultAddress) {
+                    setSelectedAddress(res.defaultAddress)
+                }
+            },
+            onError: () => {
+                Taro.showToast({ title: '获取订单信息失败', icon: 'none' })
             }
-        } else {
-            Taro.showToast({ title: '请从商品页进入', icon: 'none' })
-            Taro.navigateBack()
+        }
+    )
+
+    // 2. 使用 useRequest 托管订单提交接口
+    const { run: submitOrder, loading: submitLoading } = useRequest(
+        async () => {
+            if (!selectedAddress) {
+                Taro.showToast({ title: '请选择收货地址', icon: 'none' })
+                return Promise.reject('无收货地址')
+            }
+            return orderSubmit({
+                addressId: selectedAddress.id,
+                items,
+                productId: params?.productId,
+                specId: params?.specId,
+                remark: remark.trim()
+            })
+        },
+        {
+            manual: true, // 手动触发
+            onSuccess: (res) => {
+                Taro.showToast({ title: '下单成功', icon: 'success' })
+                setTimeout(() => {
+                    Taro.redirectTo({ url: `/pages/order/detail/index?id=${res.orderId}` })
+                }, 1500)
+            }
+        }
+    )
+
+    // 3. 路由前置校验与事件监听
+    useEffect(() => {
+        if (!params?.items || items.length === 0) {
+            Taro.showToast({ title: params?.items ? '参数错误' : '请从商品页进入', icon: 'none' })
+            setTimeout(() => Taro.navigateBack(), 1500)
+            return
         }
 
-        // 2. 统一使用一个地址选择的事件监听（修复了原本拼写错误并合并逻辑）
         const handleAddressSelect = (addr: ADDRESS.Items) => {
             setSelectedAddress(addr)
         }
@@ -41,47 +86,17 @@ export default function ConfirmOrder() {
         }
     }, [])
 
-    const fetchPreview = async (items: ORDER.ItemRequest[]) => {
-        try {
-            const res = await orderPreview({ items, productId: params?.productId, specId: params?.specId })
-            setPreviewList(res.specs || [])
-            setTotalAmount(res.totalAmount)
-            setSelectedAddress(res.defaultAddress)
-        } catch (err) {
-            Taro.showToast({ title: '获取订单信息失败', icon: 'none' })
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const chooseAddress = () => {
         Taro.navigateTo({ url: `/pages/address/select/index?id=${selectedAddress?.id}` })
     }
 
-    const submitOrder = async () => {
-        if (!selectedAddress) {
-            Taro.showToast({ title: '请选择收货地址', icon: 'none' })
-            return
-        }
-        try {
-            // 3. 在提交时，将 remark 传递给接口
-            const res = await orderSubmit({
-                addressId: selectedAddress.id,
-                items: items,
-                productId: params?.productId, 
-                specId: params?.specId,
-                remark: remark.trim() // 去除前后空格
-            })
-            Taro.showToast({ title: '下单成功', icon: 'success' })
-            setTimeout(() => {
-                Taro.redirectTo({ url: `/pages/order/detail/index?id=${res.orderId}` })
-            }, 1500)
-        } catch (err) {
-            // 错误已在 request 中处理
-        }
-    }
+    // 安全获取回显数据的默认值
+    const previewList = previewData?.specs || []
+    const totalAmount = previewData?.totalAmount || 0
+    const freight = previewData?.freight || 0
+    const actualAmount = previewData?.actualAmount || 0
 
-    if (loading) {
+    if (previewLoading) {
         return <View className='flex justify-center items-center h-screen'>加载中...</View>
     }
 
@@ -117,8 +132,8 @@ export default function ConfirmOrder() {
                     <View key={idx} className='flex py-2 border-b last:border-0'>
                         <Image src={item.imageUrl} className='w-20 h-20 border-1px border-solid border-gray-200 rounded-12px mr-3' mode='aspectFill' />
                         <View className='flex-1'>
-                            <View className='flex justify-between'>
-                                <Text className='font-medium'>{item.productName}</Text>
+                            <View className='flex justify-between h-80px'>
+                                <Text className='w-380px line-clamp-2'>{item.productName}</Text>
                                 <Text>x{item.totalQuantity}</Text>
                             </View>
                             <Text className='text-gray-500 text-sm'>规格：{item.specName}</Text>
@@ -130,35 +145,52 @@ export default function ConfirmOrder() {
                     </View>
                 ))}
 
-                {/* 4. 修改买家留言卡片：替换为 Input 输入框 */}
+                {/* 买家留言 */}
                 <View className='bg-white mt-2 rounded-xl flex items-center justify-between pt-3 bt'>
                     <View className='flex items-center text-30px text-gray-800 ml-2 flex-shrink-0'>
                         <Text className='iconfont icon-remark text-gray-700 text-36px mr-2 leading-[inherit]' />
                         <Text className='font-medium'>买家留言：</Text>
                     </View>
-                    {/* 使用 Taro 的 Input 组件 */}
                     <Input
                         className='text-gray-700 flex-1 text-left bg-white'
                         placeholder='选填，可以告诉商家您的特殊要求'
                         value={remark}
                         onInput={(e) => setRemark(e.detail.value)}
-                        maxlength={100} // 限制留言字数，防止后端字段溢出
+                        maxlength={100}
                     />
                 </View>
             </View>
 
             {/* 合计 */}
-            <View className='bg-white mx-4 mt-4 rounded-lg p-4'>
+            <View className='bg-white mx-4 mt-4 rounded-lg p-4 text-30px'>
                 <View className='flex justify-between'>
-                    <Text>合计</Text>
-                    <Text className='text-red-500 font-bold'>¥{totalAmount.toFixed(2)}</Text>
+                    <Text>商品金额</Text>
+                    <Text>¥{totalAmount.toFixed(2)}</Text>
+                </View>
+                <View className='flex justify-between mt-4'>
+                    <Text>运费</Text>
+                    <Text>¥{freight.toFixed(2)}</Text>
                 </View>
             </View>
 
-            {/* 提交按钮 */}
-            <View className='fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3 z-10'>
-                <Button className='bg-primary-400 text-white rounded-full w-full' onClick={submitOrder}>
-                    提交订单
+            {/* 底部结算提交栏 */}
+            <View className='fixed bottom-0 left-0 right-0 h-100px bg-white flex items-center justify-between pl-4 z-10 box-border'>
+                {/* 左侧实付款 */}
+                <View className='flex items-center text-30px text-gray-700'>
+                    <Text>实付款：</Text>
+                    <Text className='text-red-500 font-bold text-36px'>
+                        ¥{actualAmount.toFixed(2)}
+                    </Text>
+                </View>
+
+                {/* 右侧提交订单按钮 */}
+                <Button
+                    className='bg-primary-400 text-white text-32px h-full px-8 flex items-center justify-center rounded-none m-0 border-none after:border-none'
+                    style={{ borderRadius: 0 }} // 覆盖Taro Button自带的微小圆角或边框
+                    disabled={submitLoading}
+                    onClick={submitOrder}
+                >
+                    {submitLoading ? '提交中...' : '提交订单'}
                 </Button>
             </View>
         </View>
