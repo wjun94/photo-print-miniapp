@@ -56,7 +56,7 @@ export default function Index() {
         {/* 右侧：打印照片商品 */}
         <View
           onClick={() => navigate('/pages/products/index')}
-          className='flex items-center flex-col justify-between p-4 rounded-2xl bg-[#f2f7fd] text-black active:opacity-90'
+          className='flex items-center flex-col justify-between p-4 rounded-2xl bg-primary-200 text-black active:opacity-90'
         >
           <Text className='iconfont icon-photo text-primary-400 text-60px opacity-90' />
           <View className='flex flex-col items-center justify-center'>

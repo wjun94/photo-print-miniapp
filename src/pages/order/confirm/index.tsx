@@ -1,7 +1,7 @@
-import { View, Text, Button } from '@tarojs/components'
+import { View, Text, Button, Input } from '@tarojs/components'
 import { useEffect, useState } from 'react'
 import { Image } from '@/components'
-import Taro, { eventCenter } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { orderPreview, orderSubmit } from '@/api/order'
 
 export default function ConfirmOrder() {
@@ -11,6 +11,8 @@ export default function ConfirmOrder() {
     const [totalAmount, setTotalAmount] = useState(0)
     const [selectedAddress, setSelectedAddress] = useState<ADDRESS.Items | null>(null)
     const [loading, setLoading] = useState(true)
+    // 1. 新增买家留言的状态
+    const [remark, setRemark] = useState('')
 
     useEffect(() => {
         // 从上一页获取 items 数组（路由参数或全局状态）
@@ -27,22 +29,15 @@ export default function ConfirmOrder() {
             Taro.showToast({ title: '请从商品页进入', icon: 'none' })
             Taro.navigateBack()
         }
-        eventCenter.on("addres/select", (addr) => {
-            setSelectedAddress(addr)
-        })
-        return () => {
-            eventCenter.off("addres/select")
-        }
-    }, [])
 
-    // 监听地址选择结果（从地址列表页返回）
-    useEffect(() => {
-        const handler = (data: { address: ADDRESS.Items }) => {
-            setSelectedAddress(data.address)
+        // 2. 统一使用一个地址选择的事件监听（修复了原本拼写错误并合并逻辑）
+        const handleAddressSelect = (addr: ADDRESS.Items) => {
+            setSelectedAddress(addr)
         }
-        Taro.eventCenter.on('addressSelected', handler)
+        Taro.eventCenter.on("addressSelected", handleAddressSelect)
+
         return () => {
-            Taro.eventCenter.off('addressSelected', handler)
+            Taro.eventCenter.off("addressSelected", handleAddressSelect)
         }
     }, [])
 
@@ -69,9 +64,13 @@ export default function ConfirmOrder() {
             return
         }
         try {
+            // 3. 在提交时，将 remark 传递给接口
             const res = await orderSubmit({
                 addressId: selectedAddress.id,
-                items: items
+                items: items,
+                productId: params?.productId, 
+                specId: params?.specId,
+                remark: remark.trim() // 去除前后空格
             })
             Taro.showToast({ title: '下单成功', icon: 'success' })
             setTimeout(() => {
@@ -89,21 +88,26 @@ export default function ConfirmOrder() {
     return (
         <View className='bg-gray-100 min-h-screen pb-20'>
             {/* 地址卡片 */}
-            <View className='bg-white mx-4 mt-4 rounded-lg p-4' onClick={chooseAddress}>
+            <View className='bg-white mx-4 mt-4 rounded-xl p-4 flex items-start' onClick={chooseAddress}>
                 {selectedAddress ? (
                     <>
-                        <View className='flex justify-between mb-2'>
-                            <Text className='font-bold'>{selectedAddress.receiverName}</Text>
-                            <Text>{selectedAddress.mobile}</Text>
-                        </View>
-                        <View className='text-gray-600'>
-                            {selectedAddress.provinceName} {selectedAddress.cityName} {selectedAddress.districtName} {selectedAddress.detail} {selectedAddress.doorplate}
+                        <Text className='iconfont icon-shou text-red-500 mr-3 text-42px flex-shrink-0' />
+                        <View className='flex-1'>
+                            <View className='flex items-center mb-2 text-36px font-bold text-gray-900'>
+                                <Text className='mr-4'>{selectedAddress.receiverName}</Text>
+                                <Text>{selectedAddress.mobile}</Text>
+                            </View>
+                            <View className='text-28px text-gray-600 leading-relaxed'>
+                                {selectedAddress.provinceName} {selectedAddress.cityName} {selectedAddress.districtName} {selectedAddress.detail} {selectedAddress.doorplate}
+                            </View>
                         </View>
                     </>
                 ) : (
-                    <View className='text-center py-2 text-gray-400'>请选择收货地址</View>
+                    <View className='flex items-center justify-center flex-col w-full text-gray-400'>
+                        <Text className='iconfont icon-location text-64px' />
+                        <View className='text-center py-2 w-full text-28px'>请选择收货地址</View>
+                    </View>
                 )}
-                <View className='text-right text-gray-400 mt-2'>修改 &gt;</View>
             </View>
 
             {/* 商品列表 */}
@@ -125,6 +129,22 @@ export default function ConfirmOrder() {
                         </View>
                     </View>
                 ))}
+
+                {/* 4. 修改买家留言卡片：替换为 Input 输入框 */}
+                <View className='bg-white mt-2 rounded-xl flex items-center justify-between pt-3 bt'>
+                    <View className='flex items-center text-30px text-gray-800 ml-2 flex-shrink-0'>
+                        <Text className='iconfont icon-remark text-gray-700 text-36px mr-2 leading-[inherit]' />
+                        <Text className='font-medium'>买家留言：</Text>
+                    </View>
+                    {/* 使用 Taro 的 Input 组件 */}
+                    <Input
+                        className='text-gray-700 flex-1 text-left bg-white'
+                        placeholder='选填，可以告诉商家您的特殊要求'
+                        value={remark}
+                        onInput={(e) => setRemark(e.detail.value)}
+                        maxlength={100} // 限制留言字数，防止后端字段溢出
+                    />
+                </View>
             </View>
 
             {/* 合计 */}
@@ -136,7 +156,7 @@ export default function ConfirmOrder() {
             </View>
 
             {/* 提交按钮 */}
-            <View className='fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3'>
+            <View className='fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3 z-10'>
                 <Button className='bg-primary-400 text-white rounded-full w-full' onClick={submitOrder}>
                     提交订单
                 </Button>

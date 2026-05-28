@@ -11,7 +11,9 @@ export function getImageUrl(url = "") {
     url.startsWith("upload/") ||
     url.startsWith("upload-dev/") ||
     url.startsWith("upload-admin-dev/") ||
-    url.startsWith("upload-prod/")
+    url.startsWith("upload-prod/") ||
+    url.startsWith("dev/") ||
+    url.startsWith("prod/")
   ) {
     return `${STATIC_BASE_URL}/` + url + "?imageView2/1/w/750";
   }
