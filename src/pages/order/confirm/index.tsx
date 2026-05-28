@@ -1,12 +1,12 @@
 import { View, Text, Button, Input } from '@tarojs/components'
 import { useEffect, useState } from 'react'
 import { Image } from '@/components'
-import Taro from '@tarojs/taro'
+import Taro, { useRouter } from '@tarojs/taro'
 import { useRequest } from 'ahooks'
 import { orderPreview, orderSubmit } from '@/api/order'
 
 export default function ConfirmOrder() {
-    const params = Taro.getCurrentInstance().router?.params
+    const { params } = useRouter()
     const [selectedAddress, setSelectedAddress] = useState<ADDRESS.Items | null>(null)
     const [remark, setRemark] = useState('')
 
@@ -49,6 +49,8 @@ export default function ConfirmOrder() {
                 Taro.showToast({ title: '请选择收货地址', icon: 'none' })
                 return Promise.reject('无收货地址')
             }
+            console.log(params)
+            console.log(items)
             return orderSubmit({
                 addressId: selectedAddress.id,
                 items,
@@ -79,10 +81,10 @@ export default function ConfirmOrder() {
         const handleAddressSelect = (addr: ADDRESS.Items) => {
             setSelectedAddress(addr)
         }
-        Taro.eventCenter.on("addressSelected", handleAddressSelect)
+        Taro.eventCenter.on("addres/select", handleAddressSelect)
 
         return () => {
-            Taro.eventCenter.off("addressSelected", handleAddressSelect)
+            Taro.eventCenter.off("addres/select", handleAddressSelect)
         }
     }, [])
 

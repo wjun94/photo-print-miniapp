@@ -1,8 +1,8 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useState } from 'react'
 import { orderList } from '@/api/order'
-import { ScrollLoadList } from '@/components'
+import { ScrollLoadList, Image } from '@/components'
 
 // 模拟扩展后的订单数据结构（供参考）
 interface OrderItem {

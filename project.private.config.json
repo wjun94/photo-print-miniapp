@@ -9,16 +9,9 @@
         {
           "name": "pages/order/upload/index",
           "pathName": "pages/order/upload/index",
-          "query": "productId=2058506916904046592&specId=2058507005479358464",
+          "query": "productId=2059930797791514624&specId=2059930831937343488",
           "scene": null,
           "launchMode": "default"
-        },
-        {
-          "name": "pages/order/upload/index",
-          "pathName": "pages/order/upload/index",
-          "query": "productId=2059476607822729216&specId=2059476646456463360",
-          "launchMode": "default",
-          "scene": null
         },
         {
           "name": "pages/address/list/index",

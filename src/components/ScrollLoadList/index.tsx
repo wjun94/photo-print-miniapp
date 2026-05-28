@@ -98,7 +98,7 @@ const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: 
       const totalPage = Math.ceil(total / pageSize)
 
       if (isRefresh) {
-        setData(list)
+        setData(list || [])
         setPage(currentPage)
       } else {
         setData(prev => [...prev, ...list])

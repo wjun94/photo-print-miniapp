@@ -25,7 +25,13 @@ export default function AddressList() {
             {/* 头部标题与编辑操作栏 */}
             <View className='flex justify-between items-center py-3 px-1'>
                 <Text className='text-34px font-bold text-[#111111]'>常用地址</Text>
-                <Text className='text-30px text-[#2F77F1] font-medium' onClick={handleManage}>编辑</Text>
+                <View className='flex text-30px'>
+                    <Text className='text-primary-400' onClick={handleManage}>编辑</Text>
+                    <Text
+                        className='text-red-400 ml-4'
+                        onClick={() => Taro.navigateTo({ url: "../edit/index" })}
+                    >新增</Text>
+                </View>
             </View>
 
             {/* 地址列表包裹器 */}
