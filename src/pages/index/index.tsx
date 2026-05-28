@@ -89,7 +89,7 @@ export default function Index() {
                 className='bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col active:opacity-95'
               >
                 {/* 产品大图区域 */}
-                <View className='w-full h-36 bg-[#f5f5f5] flex items-center justify-center overflow-hidden'>
+                <View className='w-full h-40 bg-[#f5f5f5] flex items-center justify-center overflow-hidden'>
                   <Image
                     src={item.coverImage}
                     className='w-full h-full object-cover'

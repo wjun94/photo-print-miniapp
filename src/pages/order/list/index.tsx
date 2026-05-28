@@ -10,11 +10,16 @@ interface OrderItem {
   orderNo: string
   status: 'all' | 'paid' | 'printing' | 'shipped' | 'completed'
   createdAt: string
-  goodsName: string
-  goodsSpec: string
-  goodsImg: string
-  price: number
-  quantity: number
+  specs: {
+    productName: string
+    specName: string
+    specId: string
+    imageUrl: string
+    price: number
+    quantity: number
+    totalQuantity: number
+    totalSubtotal: number
+  }[]
 }
 
 export default function OrderList() {
@@ -70,45 +75,48 @@ export default function OrderList() {
         </View>
       </View>
 
-      {/* 2. 中部：商品图文详情 */}
-      <View className='flex items-start mb-4'>
-        {/* 商品图片 */}
-        <Image
-          src={order.goodsImg}
-          className='w-20 h-20 bg-gray-100 rounded-lg mr-3 flex-shrink-0 object-cover'
-        />
 
-        {/* 商品文本与右侧价格 */}
-        <View className='flex-1 flex justify-between items-start min-w-0'>
-          <View className='flex-1 min-w-0 pr-4'>
-            <Text className='text-base text-gray-800 font-normal block truncate'>
-              {order.goodsName}
-            </Text>
-            <Text className='text-sm text-gray-400 mt-1 block'>
-              {order.goodsSpec}
-            </Text>
-          </View>
 
-          <View className='text-right flex-shrink-0'>
-            <Text className='text-base text-gray-800 font-medium block'>
-              ¥ {order.price}
-            </Text>
-            <Text className='text-sm text-gray-400 mt-1 block'>
-              共 {order.quantity} 件
-            </Text>
+      {/* 商品文本与右侧价格 */}
+      {
+        order.specs?.map(item => <View key={item.specId} className='flex items-start mb-4'>
+          {/* 商品图片 */}
+          <Image
+            src={item.imageUrl}
+            className='w-20 h-20 bg-gray-100 rounded-lg mr-3 flex-shrink-0 object-cover'
+          />
+          {/* 2. 中部：商品图文详情 */}
+          <View className='flex-1 flex justify-between items-start min-w-0'>
+            <View className='flex-1 min-w-0 pr-4'>
+              <Text className='text-base text-gray-800 font-normal block truncate'>
+                {item.productName}
+              </Text>
+              <Text className='text-sm text-gray-400 mt-1 block'>
+                {item.specName}
+              </Text>
+            </View>
+
+            <View className='text-right flex-shrink-0'>
+              <Text className='text-base text-gray-800 font-medium block'>
+                ¥ {item.totalSubtotal}
+              </Text>
+              <Text className='text-sm text-gray-400 mt-1 block'>
+                共 {item.totalQuantity} 件
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
+        )
+      }
+
 
       {/* 3. 底部：时间 + 箭头指示器 */}
-      <View className='flex justify-between items-center pt-2'>
-        <View className='text-sm text-gray-400'>
+      <View className='flex justify-between items-center pt-2 bt text-gray-400'>
+        <View className='text-sm'>
           {order.createdAt}
         </View>
         {/* 自定义向右箭头样式 */}
-        <View className='text-gray-400 text-lg font-light leading-none'>
-          ›
-        </View>
+        <Text className='iconfont icon-next text-28px' />
       </View>
     </View>
   )
