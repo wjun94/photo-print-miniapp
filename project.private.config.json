@@ -7,11 +7,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "订单详情",
+          "pathName": "pages/order/detail/index",
+          "query": "id=2060185226730016768",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "pages/order/detail/index",
           "pathName": "pages/order/detail/index",
           "query": "id=2059999807153377280",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "pages/address/list/index",

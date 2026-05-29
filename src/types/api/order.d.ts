@@ -1,10 +1,12 @@
 declare namespace ORDER {
   type OrderStatus =
-    | "pending"
-    | "paid"
-    | "processing"
-    | "completed"
-    | "cancelled";
+    | "pending" // 待付款
+    | "paid"  // 已付款/待发货
+    | "shipped" // 已发货
+    | "completed" // 已取消
+    | "refunding"  // 退款中
+    | "refunded"  // 已退款
+    | "cancelled";  // 已取消
   type CreateReq = {
     token: string;
     userId: number;
@@ -21,15 +23,24 @@ declare namespace ORDER {
     spec: string;
     quantity: number;
     price: number;
+    totalQuantity: number
+    totalSubtotal: number
+    specName: string
+    productName: string
+    specId: string
   }
   type List = {
     id: number;
     orderNo: string;
     userId: number;
     status: OrderStatus;
-    address: string;
+    address: ADDRESS.Items;
     createdAt: string;
+    actualAmount: string
+    freight: string
+    amount: string
     items?: OrderItem[];
+    specs?: OrderItem[];
   }
   export interface ItemRequest {
     productId: string

@@ -47,7 +47,7 @@ export default function Index() {
         >
           <Text className='iconfont icon-camera-fill !text-60px opacity-90' />
           <View className='flex flex-col items-center justify-center'>
-            <Text className='text-30px font-bold tracking-wide my-2'>上传照片</Text>
+            <Text className='text-30px font-bold tracking-wide my-2'>外部订单</Text>
             <Text className='text-24px opacity-80 mt-0.5'>快速上传照片</Text>
           </View>
           {/* 此处可用 iconfont 或真实图片替换 */}
