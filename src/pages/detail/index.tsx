@@ -1,4 +1,4 @@
-import { View, ScrollView, Button } from '@tarojs/components'
+import { View, ScrollView, Button, Text } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import { getProducts } from '@/api/product'
@@ -69,22 +69,22 @@ export default function () {
             </ScrollView>
 
             {/* 商品信息 */}
-            <View className='bg-white p-4 mt-2'>
-                <View className='text-2xl font-bold mb-2'>{product.name}</View>
-                <View className='text-red-500 text-2xl font-bold mb-2'>¥{currentPrice.toFixed(2)}</View>
-                <View className='flex justify-between text-gray-500 text-sm'>
+            <View className='bg-white p-4'>
+                <View className='text-red-500 text-36px font-bold mb-4'>¥{currentPrice.toFixed(2)}</View>
+                <View className='text-32px'>{product.name}</View>
+                <View className='flex justify-between text-gray-500 mt-2 text-sm'>
                     <View>已售 {Math.floor(Math.random() * 5000) + 100}</View>
                     <View>好评率 98%</View>
                 </View>
             </View>
 
             {/* 选择规格 */}
-            <View className='bg-white p-4 mt-2 flex justify-between items-center' onClick={openSkuPopup}>
-                <View>
-                    <View className='text-gray-400 text-sm'>选择规格</View>
-                    <View className='mt-1'>{selectedSpec ? selectedSpec.name : '请选择规格'}</View>
+            <View className='bg-white p-4 mt-2 flex justify-between items-center text-30px' onClick={openSkuPopup}>
+                <View className='mr-2'>选择规格</View>
+                <View className='flex items-center text-gray-500'>
+                    <View>{selectedSpec ? selectedSpec.name : '请选择规格'}</View>
+                    <Text className="iconfont icon-next ml-1" />
                 </View>
-                <View className='text-gray-400'>{'>'}</View>
             </View>
 
             {/* 商品详情（富文本） */}
