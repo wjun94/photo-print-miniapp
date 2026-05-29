@@ -108,7 +108,7 @@ export default function ConfirmOrder() {
             <View className='bg-white mx-4 mt-4 rounded-xl p-4 flex items-start' onClick={chooseAddress}>
                 {selectedAddress ? (
                     <>
-                        <Text className='iconfont icon-shou text-red-500 mr-3 text-42px flex-shrink-0' />
+                        <Text className='iconfont icon-shou text-red-500 mr-2 text-42px flex-shrink-0' />
                         <View className='flex-1'>
                             <View className='flex items-center mb-2 text-36px font-bold text-gray-900'>
                                 <Text className='mr-4'>{selectedAddress.receiverName}</Text>

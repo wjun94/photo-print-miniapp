@@ -69,7 +69,7 @@ const OrderDetail = () => {
 
         {/* 收货地址 */}
         <View className='bg-white rounded-lg p-4 mb-4 rounded-20px flex items-start'>
-          <Text className='iconfont icon-shou text-red-500 mr-3 text-42px flex-shrink-0' />
+          <Text className='iconfont icon-shou text-red-500 mr-2 text-42px flex-shrink-0' />
           <View className='flex-1'>
             <View className='flex items-center mb-2 text-36px font-bold text-gray-900'>
               <Text className='mr-4'>{order.address.receiverName}</Text>
