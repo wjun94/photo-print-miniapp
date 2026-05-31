@@ -27,8 +27,8 @@ const OrderDetail = () => {
 
   const statusMap: Record<ORDER.List['status'], { text: string; subText: string; color: string; iconPath?: string }> = {
     pending: { text: '待支付', subText: '您的订单还未支付，请尽快支付！', color: 'text-orange-500' },
+    paid: { text: '待发货', subText: '订单已支付，我们会尽快发货。', color: 'text-green-600' },
     shipped: { text: '已发货', subText: '您的订单已发货，感谢您的支持！', color: 'text-blue-500', iconPath: 'https://cdn-icons-png.flaticon.com/512/1048/1048866.png' }, // 替换为真实图标
-    paid: { text: '已支付', subText: '订单已支付，我们会尽快发货。', color: 'text-green-600' },
     refunding: { text: '退款中', subText: '您的订单正在制作中。', color: 'text-red-400' },
     refunded: { text: '已退款', subText: '您的订单正在制作中。', color: 'text-red-400' },
     completed: { text: '已完成', subText: '感谢您的支持，欢迎再次光临！', color: 'text-green-700' },
@@ -146,7 +146,7 @@ const OrderDetail = () => {
         {/* 订单信息 */}
         <View className='bg-white rounded-lg p-4 mb-4 rounded-20px'>
           <View className='flex items-center py-1'>
-            <Text className='text-gray-600'>订单号：
+            <Text className='text-gray-600'>订单编号：
               <Text className='text-gray-800'>{order.orderNo}</Text>
             </Text>
             <View onClick={copyOrderNo} className='text-primary-400 border border-blue-600 rounded-full ml-2'>

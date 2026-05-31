@@ -20,6 +20,16 @@ page {
   border-top: 1px solid #e5e7eb;
 }
 
+.border {
+  border: 1px solid #e5e7eb;
+}
+
+button.rounded-full {
+  &::after {
+    border-radius: 100px;
+  }
+}
+
 .line-clamp-2 {
   display: -webkit-box;           /* 将对象作为弹性伸缩盒子模型显示 */
   -webkit-box-orient: vertical;   /* 设置伸缩盒子的子元素排列方式为垂直 */

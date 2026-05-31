@@ -18,6 +18,33 @@ export const createOrder = (data) => {
   });
 };
 
+/** 取消订单 */
+export const cancelOrder = (data) => {
+  return request<null>({
+    url: "/order/cancel",
+    method: "POST",
+    data: data as ORDER.CreateReq,
+  });
+};
+
+/** 确认收货 */
+export const confirmOrder = (data) => {
+  return request<null>({
+    url: "/order/confirm",
+    method: "POST",
+    data: data as ORDER.CreateReq,
+  });
+};
+
+/** 支付成功 */
+export const paySuccess = (data) => {
+  return request<null>({
+    url: "/order/pay/success",
+    method: "POST",
+    data: data as ORDER.CreateReq,
+  });
+};
+
 /** 订单详情 */
 export const getOrder = (id) => {
   return request({

@@ -3,6 +3,7 @@ export { default as ImageCropper } from './ImageCropper'
 export { default as ScrollLoadList } from './ScrollLoadList'
 export * from './ScrollLoadList'
 export { default as SkuPopup } from './SkuPopup'
+export { default as Modal } from './Modal'
 export { default as RegionPicker } from './RegionPicker'
 export { HtmlRender } from './HtmlRender'
 

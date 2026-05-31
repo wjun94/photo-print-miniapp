@@ -1,14 +1,14 @@
-import { View, Text } from '@tarojs/components'
+import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useState } from 'react'
-import { orderList } from '@/api/order'
-import { ScrollLoadList, Image } from '@/components'
+import { useState, useCallback } from 'react'
+import { orderList, paySuccess, confirmOrder, cancelOrder } from '@/api/order'
+import { ScrollLoadList, Image, Modal } from '@/components'
 
 // 模拟扩展后的订单数据结构（供参考）
 interface OrderItem {
   id: number
   orderNo: string
-  status: 'all' | 'paid' | 'printing' | 'shipped' | 'completed'
+  status: 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled'
   createdAt: string
   specs: {
     productName: string
@@ -22,25 +22,37 @@ interface OrderItem {
   }[]
 }
 
+// 弹窗类型定义
+type ModalType = 'pay' | 'cancel' | 'confirm' | null
+
 export default function OrderList() {
   // 当前选中的 Tab 状态
   const [currentStatus, setCurrentStatus] = useState<string>('all')
+  // 列表刷新key，操作成功后递增强制刷新
+  const [refreshKey, setRefreshKey] = useState<number>(0)
+  // 弹窗状态
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [modalType, setModalType] = useState<ModalType>(null)
+  const [currentOrderId, setCurrentOrderId] = useState<number | null>(null)
+  // 加载状态，防止重复点击
+  const [loading, setLoading] = useState<boolean>(false)
 
   // Tab 栏配置
   const tabs = [
     { key: 'all', label: '全部' },
     { key: 'pending', label: '待付款' },
-    { key: 'printing', label: '冲印中' },
+    { key: 'paid', label: '待发货' },
     { key: 'shipped', label: '已发货' },
     { key: 'completed', label: '已完成' },
   ] as const
 
   const statusText = {
-    pending: { text: '待处理', color: 'text-orange-500' },
-    paid: { text: '已支付', color: 'text-blue-500' },
+    pending: { text: '待支付', color: 'text-orange-500' },
+    paid: { text: '待发货', color: 'text-blue-500' },
     processing: { text: '处理中', color: 'text-blue-500' },
-    completed: { text: '已完成', color: 'text-blue-500' },
-    cancelled: { text: '已取消', color: 'text-blue-500' },
+    shipped: { text: '已发货', color: 'text-blue-500' },
+    completed: { text: '已完成', color: 'text-green-500' },
+    cancelled: { text: '已取消', color: 'text-gray-500' },
   }
 
   // 请求接口适配（加入 status 筛选）
@@ -51,12 +63,162 @@ export default function OrderList() {
       status: currentStatus === 'all' ? undefined : currentStatus
     })
     return {
-      list: (res.list || []) as ORDER.List[],
+      list: (res.list || []) as OrderItem[],
     }
   }
 
   const goToDetail = (id: number) => {
     Taro.navigateTo({ url: `/pages/order/detail/index?id=${id}` })
+  }
+
+  // 打开弹窗通用方法
+  const openModal = useCallback((type: ModalType, orderId: number) => {
+    setModalType(type)
+    setCurrentOrderId(orderId)
+    setModalVisible(true)
+  }, [])
+
+  // 关闭弹窗
+  const closeModal = useCallback(() => {
+    setModalVisible(false)
+    setModalType(null)
+    setCurrentOrderId(null)
+  }, [])
+
+  // 刷新列表
+  const refreshList = useCallback(() => {
+    setRefreshKey(prev => prev + 1)
+  }, [])
+
+  // 立即支付处理
+  const handlePay = useCallback(async () => {
+    if (!currentOrderId || loading) return
+
+    try {
+      setLoading(true)
+      await paySuccess({ id: currentOrderId })
+      Taro.showToast({ title: '支付成功', icon: 'success' })
+      closeModal()
+      refreshList()
+    } catch (error) {
+      Taro.showToast({ title: '支付失败，请重试', icon: 'error' })
+    } finally {
+      setLoading(false)
+    }
+  }, [currentOrderId, loading, closeModal, refreshList])
+
+  // 取消订单处理
+  const handleCancelOrder = useCallback(async () => {
+    if (!currentOrderId || loading) return
+
+    try {
+      setLoading(true)
+      await cancelOrder({ id: currentOrderId })
+      Taro.showToast({ title: '订单已取消', icon: 'success' })
+      closeModal()
+      refreshList()
+    } catch (error) {
+      Taro.showToast({ title: '取消失败，请重试', icon: 'error' })
+    } finally {
+      setLoading(false)
+    }
+  }, [currentOrderId, loading, closeModal, refreshList])
+
+  // 确认收货处理
+  const handleConfirmOrder = useCallback(async () => {
+    if (!currentOrderId || loading) return
+
+    try {
+      setLoading(true)
+      await confirmOrder({ id: currentOrderId })
+      Taro.showToast({ title: '确认收货成功', icon: 'success' })
+      closeModal()
+      refreshList()
+    } catch (error) {
+      Taro.showToast({ title: '操作失败，请重试', icon: 'error' })
+    } finally {
+      setLoading(false)
+    }
+  }, [currentOrderId, loading, closeModal, refreshList])
+
+  // 根据弹窗类型获取弹窗配置
+  const getModalConfig = useCallback(() => {
+    switch (modalType) {
+      case 'pay':
+        return {
+          title: '确认支付',
+          content: '您确定要立即支付该订单吗？',
+          confirmText: '立即支付',
+          onConfirm: handlePay
+        }
+      case 'cancel':
+        return {
+          title: '取消订单',
+          content: '您确定要取消该订单吗？取消后将无法恢复。',
+          confirmText: '确认',
+          onConfirm: handleCancelOrder
+        }
+      case 'confirm':
+        return {
+          title: '确认收货',
+          content: '您确定已经收到商品了吗？',
+          confirmText: '确认收货',
+          onConfirm: handleConfirmOrder
+        }
+      default:
+        return {
+          title: '提示',
+          content: '',
+          confirmText: '确定',
+          onConfirm: () => { }
+        }
+    }
+  }, [modalType, handlePay, handleCancelOrder, handleConfirmOrder])
+
+  // 根据订单状态渲染操作按钮
+  const renderActionButtons = (order: OrderItem) => {
+    switch (order.status) {
+      case 'pending':
+        return (
+          <View className="flex justify-end items-end">
+            <Button
+              className="py-2 px-4 mx-0 rounded-full bg-white text-gray-600 text-sm font-normal"
+              onClick={(e) => {
+                e.stopPropagation() // 阻止冒泡到订单卡片
+                openModal('cancel', order.id)
+              }}
+            >
+              取消订单
+            </Button>
+            <Button
+              className="py-2 px-4 mx-0 ml-2 rounded-full border-none bg-gradient-to-r from-red-400 to-red-500 text-white text-sm font-normal"
+              onClick={(e) => {
+                e.stopPropagation()
+                openModal('pay', order.id)
+              }}
+            >
+              立即支付
+            </Button>
+          </View>
+        )
+      case 'shipped':
+        return (
+          <Button
+            className="h-8 px-4 rounded-full border-none bg-gradient-to-r from-red-400 to-red-500 text-white text-sm font-normal"
+            onClick={(e) => {
+              e.stopPropagation()
+              openModal('confirm', order.id)
+            }}
+          >
+            确认收货
+          </Button>
+        )
+      case 'paid':
+      case 'completed':
+      case 'cancelled':
+      default:
+        return null
+    }
   }
 
   // 渲染单个订单卡片 (完全对齐 UI 图)
@@ -74,8 +236,6 @@ export default function OrderList() {
           {statusText[order.status]?.text}
         </View>
       </View>
-
-
 
       {/* 商品文本与右侧价格 */}
       {
@@ -108,22 +268,13 @@ export default function OrderList() {
         </View>
         )
       }
-
-
-      {/* 3. 底部：时间 + 箭头指示器 */}
-      <View className='flex justify-between items-center pt-2 bt text-gray-400'>
-        <View className='text-sm'>
-          {order.createdAt}
-        </View>
-        {/* 自定义向右箭头样式 */}
-        <Text className='iconfont icon-next text-28px' />
-      </View>
+      {renderActionButtons(order)}
     </View>
   )
 
   // 顶部固定 Tab 栏
   const renderHeader = () => (
-    <View className='sticky top-0 z-10 bg-white flex justify-around items-center .bb h-12 shadow-sm'>
+    <View className='sticky top-0 z-10 bg-white flex justify-around items-center border-b border-gray-100 h-12 shadow-sm'>
       {tabs.map((tab) => {
         const isActive = currentStatus === tab.key
         return (
@@ -145,16 +296,28 @@ export default function OrderList() {
     </View>
   )
 
+  const modalConfig = getModalConfig()
+
   return (
-    <View className='min-h-screen bg-gray-50/60 pb-6'>
+    <View className='min-h-screen pb-6'>
       <ScrollLoadList
-        // 通过 key 强制重置组件，当切换 Tab 时重新触发从第一页加载
-        key={currentStatus}
+        // 通过 key 强制重置组件，当切换 Tab 或操作成功时重新触发从第一页加载
+        key={`${currentStatus}-${refreshKey}`}
         request={fetchOrders}
         renderItem={renderItem}
         renderHeader={renderHeader}
         pageSize={10}
         keyExtractor={(item) => item.id.toString()}
+      />
+
+      {/* 通用确认弹窗 */}
+      <Modal
+        visible={modalVisible}
+        title={modalConfig.title}
+        children={modalConfig.content}
+        confirmText={modalConfig.confirmText}
+        onCancel={closeModal}
+        onConfirm={modalConfig.onConfirm}
       />
     </View>
   )
