@@ -201,7 +201,7 @@ const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: 
     if (renderEmpty) return renderEmpty()
     return (
       <View className="flex flex-col justify-center items-center text-gray-400 py-20">
-        <Image mode="widthFix" className="w-180px" src={NonePng} />
+        <Image mode="widthFix" className="w-180px max-h-180px" src={NonePng} />
         <Text className="text-28px mt-24px">{emptyText}</Text>
       </View>
     )
