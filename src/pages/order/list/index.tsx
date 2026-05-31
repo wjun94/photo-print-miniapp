@@ -96,7 +96,7 @@ export default function OrderList() {
 
     try {
       setLoading(true)
-      await paySuccess({ id: currentOrderId })
+      await paySuccess({ orderid: currentOrderId })
       Taro.showToast({ title: '支付成功', icon: 'success' })
       closeModal()
       refreshList()
@@ -113,7 +113,7 @@ export default function OrderList() {
 
     try {
       setLoading(true)
-      await cancelOrder({ id: currentOrderId })
+      await cancelOrder({ orderId: currentOrderId })
       Taro.showToast({ title: '订单已取消', icon: 'success' })
       closeModal()
       refreshList()
@@ -130,7 +130,7 @@ export default function OrderList() {
 
     try {
       setLoading(true)
-      await confirmOrder({ id: currentOrderId })
+      await confirmOrder({ orderId: currentOrderId })
       Taro.showToast({ title: '确认收货成功', icon: 'success' })
       closeModal()
       refreshList()
