@@ -136,7 +136,7 @@ export default function AddressEdit() {
         {/* 第一部分：核心表单信息卡片 */}
         <View className='bg-white rounded-2xl px-4 py-1 mb-3 shadow-sm'>
           {/* 收货人 */}
-          <View className='flex items-center py-4 border-b border-gray-100/70'>
+          <View className='flex items-center py-2 bb'>
             <View className='w-24 leading-[1] text-gray-800 flex-shrink-0'>收货人</View>
             <Input
               className='flex-1 text-gray-900 p-0 bg-transparent'
@@ -148,7 +148,7 @@ export default function AddressEdit() {
           </View>
 
           {/* 手机号码 */}
-          <View className='flex items-center py-4 border-b border-gray-100/70'>
+          <View className='flex items-center py-2 bb'>
             <View className='w-24 leading-[1] text-gray-800 flex-shrink-0'>手机号码</View>
             <Input
               className='flex-1 text-gray-900 p-0 bg-transparent'
@@ -161,7 +161,7 @@ export default function AddressEdit() {
           </View>
 
           {/* 所在地区 */}
-          <View className='flex items-center py-4 border-b border-gray-100/70 justify-between'>
+          <View className='flex items-center py-2 bb justify-between'>
             <View className='w-24 leading-[1] text-gray-800 flex-shrink-0'>所在地区</View>
             <View className='flex-1 flex items-center justify-between overflow-hidden'>
               <RegionPicker
@@ -177,7 +177,7 @@ export default function AddressEdit() {
           </View>
 
           {/* 详细地址 */}
-          <View className='py-3.5 border-b border-gray-100/70'>
+          <View className='py-3.5 bb'>
             <View className='text-gray-800 mb-1.5'>详细地址</View>
             <View className='flex items-start justify-between'>
               <Textarea
@@ -200,7 +200,7 @@ export default function AddressEdit() {
           </View>
 
           {/* 门牌号 */}
-          <View className='flex items-center py-4'>
+          <View className='flex items-center py-2'>
             <View className='w-24 text-gray-800 flex-shrink-0'>门牌号</View>
             <Input
               className='flex-1 text-gray-900 p-0 bg-transparent'

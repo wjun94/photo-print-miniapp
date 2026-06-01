@@ -50,7 +50,6 @@ const OrderDetail = () => {
 
   if (loading) return <View className='text-center py-10'>加载中...</View>
   if (!order) return <View className='text-center py-10'>订单不存在</View>
-
   return (
     <View className='min-h-screen bg-gray-100 flex flex-col px-4 pt-4'>
       <ScrollView className='flex-1 pb-20'>
@@ -145,13 +144,11 @@ const OrderDetail = () => {
 
         {/* 订单信息 */}
         <View className='bg-white rounded-lg p-4 mb-4 rounded-20px'>
-          <View className='flex items-center py-1'>
+          <View className='flex items-center py-1 text-gray-800'>
             <Text className='text-gray-600'>订单编号：
-              <Text className='text-gray-800'>{order.orderNo}</Text>
+              <Text>{order.orderNo}</Text>
             </Text>
-            <View onClick={copyOrderNo} className='text-primary-400 border border-blue-600 rounded-full ml-2'>
-              复制
-            </View>
+            <Text onClick={copyOrderNo} className='iconfont icon-copy ml-2' />
           </View>
           <View className='py-1'>
             <Text className='text-gray-600'>创建时间：<Text className='text-gray-800'>{order.createdAt}</Text></Text>

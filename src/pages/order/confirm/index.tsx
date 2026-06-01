@@ -49,8 +49,6 @@ export default function ConfirmOrder() {
                 Taro.showToast({ title: '请选择收货地址', icon: 'none' })
                 return Promise.reject('无收货地址')
             }
-            console.log(params)
-            console.log(items)
             return orderSubmit({
                 addressId: selectedAddress.id,
                 items,

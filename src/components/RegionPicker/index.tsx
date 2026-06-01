@@ -123,7 +123,7 @@ export default function RegionPicker({
   return (
     <>
       <View
-        className={`border rounded p-2 bg-white ${className}`}
+        className={`p-2 bg-white ${className}`}
         onClick={openPopup}
       >
         <View className={selected.provinceId ? 'text-gray-900' : 'text-gray-400'}>

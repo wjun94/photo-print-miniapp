@@ -12,7 +12,11 @@ export default function AddressList() {
 
     // 右上角管理/编辑跳转
     const handleManage = () => {
-        Taro.navigateTo({ url: `../edit/index?id=${selected?.id}` })
+        if (selected) {
+            Taro.navigateTo({ url: `../edit/index?id=${selected?.id}` })
+        } else {
+            Taro.showToast({ title: '请先选择地址', icon: 'none' })
+        }
     }
 
     useDidShow(() => {
@@ -26,7 +30,7 @@ export default function AddressList() {
             <View className='flex justify-between items-center py-3 px-1'>
                 <Text className='text-34px font-bold text-[#111111]'>常用地址</Text>
                 <View className='flex text-30px'>
-                    <Text className='text-primary-400' onClick={handleManage}>编辑</Text>
+                    <Text className={selected ? 'text-pimary-400' : 'text-grary-400'} onClick={handleManage}>编辑</Text>
                     <Text
                         className='text-red-400 ml-4'
                         onClick={() => Taro.navigateTo({ url: "../edit/index" })}
