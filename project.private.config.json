@@ -7,6 +7,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/index/index",
+          "pathName": "pages/index/index",
+          "query": "uid=125139201",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "订单详情",
           "pathName": "pages/order/detail/index",
           "query": "id=2060185226730016768",

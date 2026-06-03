@@ -1,15 +1,25 @@
 import { View, Text } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useShareAppMessage } from '@tarojs/taro'
 import { getImageCdnUrl } from '@/utils'
 import GalleryPng from '@/assets/img/gallery.png'
 import { ScrollLoadList, Image } from '@/components'
 import { products } from '@/api/product'
+import { useAuthStore } from '@/store'
 import './index.less'
 
 export default function Index() {
+  const { userInfo } = useAuthStore()
   const navigate = (url: string) => {
     Taro.navigateTo({ url })
   }
+
+  useShareAppMessage(() => {
+    return {
+      title: '快来看看这篇文章！',
+      path: `/pages/index/index?uid=${userInfo?.id}`,
+      // imageUrl: 'https://your-cdn.com/share-cover.jpg', // 可选，5:4比例最佳
+    }
+  })
 
   return (
     <View className='min-h-screen bg-[#fafafa] pb-2'>
