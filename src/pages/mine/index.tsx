@@ -22,10 +22,10 @@ export default function My() {
 
   // 功能列表数据
   const menuItems = [
-    { id: 'address', label: '地址管理', icon: 'icon-location', url: '/pages/address/list/index' },
-    { id: 'coupon', label: '我的优惠券', icon: 'icon-coupon', url: '/pages/coupon/index' },
-    { id: 'icon-favorites-fill', label: '我的收藏', icon: 'icon-favorites-fill', url: '/pages/favorite/index' },
-    { id: 'faq', label: '常见问题', icon: 'icon-doubt', url: '/pages/faq/index' },
+    { id: 'address', label: '地址管理', icon: 'icon-address', url: '/pages/address/list/index' },
+    // { id: 'coupon', label: '我的优惠券', icon: 'icon-coupon', url: '/pages/coupon/index' },
+    // { id: 'icon-favorites-fill', label: '我的收藏', icon: 'icon-favorites-fill', url: '/pages/favorite/index' },
+    { id: 'faq', label: '常见问题', icon: 'icon-banzhuzhongxin', url: '/pages/faq/index' },
     { id: 'friend', label: '好友列表', icon: 'icon-doubt', url: '/pages/friend/index' },
   ]
 
@@ -55,7 +55,7 @@ export default function My() {
         </View>
 
         {/* 2. 我的订单卡片 */}
-        <View className='bg-white rounded-2xl p-4 shadow-sm mb-4 border border-solid border-white'>
+        <View className='bg-white rounded-20px p-4 shadow-sm mb-4 border border-solid border-white'>
           {/* 卡片头部 */}
           <View className='flex justify-between items-center mb-5'>
             <Text className='text-base font-bold text-[#333333]'>我的订单</Text>
@@ -86,24 +86,20 @@ export default function My() {
           </View>
         </View>
 
-        {/* 3. 菜单功能列表卡片 */}
-        <View className='bg-white rounded-2xl px-4 py-1 shadow-sm border border-solid border-white flex flex-col'>
-          {menuItems.map((item, index) => (
-            <View
-              key={item.id}
-              onClick={() => navigate(item.url)}
-              className={`flex items-center justify-between py-4 transition-colors duration-150 ${index !== menuItems.length - 1 ? 'bb' : ''
-                }`}
-            >
-              {/* 左侧图标与文本 */}
-              <View className='flex items-center gap-3'>
-                <Text style={{ fontSize: '44rpx' }} className={`iconfont ${item.icon} text-primary-400`} />
-                <Text className='text-[#333333] font-medium'>{item.label}</Text>
+        <View className='bg-white rounded-20px pb-2'>
+          <Text className='text-32px font-bold p-4 pb-2 block'>我的服务</Text>
+          <View className='grid grid-cols-4 gap-0'>
+            {menuItems.map((item) => (
+              <View
+                key={item.id}
+                onClick={() => navigate(item.url)}
+                className="flex items-center flex-col text-[#333333] py-2 transition-colors duration-150"
+              >
+                <Text className={`iconfont ${item.icon} text-62px mb-8px`} />
+                <Text>{item.label}</Text>
               </View>
-              {/* 右侧箭头 */}
-              <Text className='iconfont icon-next text-[#cccccc]' />
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
       </View>
     </View>
