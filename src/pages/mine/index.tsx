@@ -22,11 +22,12 @@ export default function My() {
 
   // 功能列表数据
   const menuItems = [
+    { id: 'shoyi', label: '收益管理', icon: 'icon-shoyiguanli', url: '/pages/income/index' },
     { id: 'address', label: '地址管理', icon: 'icon-address', url: '/pages/address/list/index' },
     // { id: 'coupon', label: '我的优惠券', icon: 'icon-coupon', url: '/pages/coupon/index' },
     // { id: 'icon-favorites-fill', label: '我的收藏', icon: 'icon-favorites-fill', url: '/pages/favorite/index' },
+    { id: 'friend', label: '好友列表', icon: 'icon-haoyouleibiao', url: '/pages/friend/index' },
     { id: 'faq', label: '常见问题', icon: 'icon-banzhuzhongxin', url: '/pages/faq/index' },
-    { id: 'friend', label: '好友列表', icon: 'icon-doubt', url: '/pages/friend/index' },
   ]
 
   return (
@@ -95,7 +96,7 @@ export default function My() {
                 onClick={() => navigate(item.url)}
                 className="flex items-center flex-col text-[#333333] py-2 transition-colors duration-150"
               >
-                <Text className={`iconfont ${item.icon} text-62px mb-8px`} />
+                <Text className={`iconfont ${item.icon} text-56px mb-8px`} />
                 <Text>{item.label}</Text>
               </View>
             ))}
