@@ -1,8 +1,8 @@
 import { View, Text, Button } from '@tarojs/components'
-import Taro from '@tarojs/taro'
-import { useState, useCallback } from 'react'
+import Taro, { useDidShow } from '@tarojs/taro'
+import { useState, useCallback, useRef } from 'react'
 import { orderList, paySuccess, confirmOrder, cancelOrder } from '@/api/order'
-import { ScrollLoadList, Image, Modal } from '@/components'
+import { ScrollLoadList, Image, Modal, ScrollLoadListRef } from '@/components'
 
 // 模拟扩展后的订单数据结构（供参考）
 interface OrderItem {
@@ -26,6 +26,7 @@ interface OrderItem {
 type ModalType = 'pay' | 'cancel' | 'confirm' | null
 
 export default function OrderList() {
+  const listRef = useRef<ScrollLoadListRef>()
   // 当前选中的 Tab 状态
   const [currentStatus, setCurrentStatus] = useState<string>('all')
   // 列表刷新key，操作成功后递增强制刷新
@@ -54,6 +55,10 @@ export default function OrderList() {
     completed: { text: '已完成', color: 'text-green-500' },
     cancelled: { text: '已取消', color: 'text-gray-500' },
   }
+
+  useDidShow(() => {
+    listRef?.current?.refresh?.()
+  })
 
   // 请求接口适配（加入 status 筛选）
   const fetchOrders = async (page: number, pageSize: number) => {
@@ -301,6 +306,7 @@ export default function OrderList() {
   return (
     <View className='min-h-screen pb-6'>
       <ScrollLoadList
+        ref={listRef}
         // 通过 key 强制重置组件，当切换 Tab 或操作成功时重新触发从第一页加载
         key={`${currentStatus}-${refreshKey}`}
         request={fetchOrders}
@@ -314,7 +320,7 @@ export default function OrderList() {
       <Modal
         visible={modalVisible}
         title={modalConfig.title}
-        children={modalConfig.content}
+        children={<View className="text-center">{modalConfig.content}</View>}
         confirmText={modalConfig.confirmText}
         onCancel={closeModal}
         onConfirm={modalConfig.onConfirm}

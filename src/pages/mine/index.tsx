@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/store'
 import { View, Text, Image, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 
@@ -5,6 +6,7 @@ import Taro from '@tarojs/taro'
 const defaultAvatar = 'https://api.dicebear.com/7.x/adventurer/svg?seed=cloud'
 
 export default function My() {
+  const { userInfo } = useAuthStore()
   const navigate = (url: string) => {
     Taro.navigateTo({ url })
   }
@@ -24,10 +26,11 @@ export default function My() {
     { id: 'coupon', label: '我的优惠券', icon: 'icon-coupon', url: '/pages/coupon/index' },
     { id: 'icon-favorites-fill', label: '我的收藏', icon: 'icon-favorites-fill', url: '/pages/favorite/index' },
     { id: 'faq', label: '常见问题', icon: 'icon-doubt', url: '/pages/faq/index' },
+    { id: 'friend', label: '好友列表', icon: 'icon-doubt', url: '/pages/friend/index' },
   ]
 
   return (
-    <View className='min-h-screen bg-[#f7f8fa] px-4 pt-6 pb-10 flex flex-col justify-between box-border'>
+    <View className='min-h-screen px-4 pt-6 pb-10 flex flex-col justify-between box-border'>
 
       <View className='w-full'>
         {/* 1. 用户信息头部区域 */}
@@ -44,7 +47,7 @@ export default function My() {
             {/* 昵称及签名 */}
             <View className='flex flex-col gap-1'>
               <Text className='text-xl font-bold text-[#222222] tracking-wide'>你好，小云</Text>
-              <Text className='text-xs text-[#999999]'>用照片记录美好生活</Text>
+              <Text className='text-xs text-[#999999]'>ID：{userInfo?.id}</Text>
             </View>
           </View>
           {/* 右侧箭头 */}
@@ -103,18 +106,6 @@ export default function My() {
           ))}
         </View>
       </View>
-
-      {/* 4. 底部固定的在线客服按钮 */}
-      <View className='w-full mt-8 px-1'>
-        <Button
-          openType='contact' // 微信小程序原生客服能力支持
-          className='w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#3b82f6] to-[#4f46e5] text-white h-12 rounded-xl shadow-md active:shadow-sm active:scale-[0.99] transition-all duration-150 border-0 font-medium text-base'
-        >
-          <Text className='iconfont icon-customer-service text-xl' />
-          <Text>在线客服</Text>
-        </Button>
-      </View>
-
     </View>
   )
 }

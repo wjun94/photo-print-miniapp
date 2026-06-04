@@ -9,7 +9,7 @@
         {
           "name": "pages/index/index",
           "pathName": "pages/index/index",
-          "query": "uid=125139201",
+          "query": "",
           "scene": null,
           "launchMode": "default"
         },

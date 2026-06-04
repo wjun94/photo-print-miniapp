@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 const OrderDetail = () => {
   const router = useRouter()
   const { id } = router.params
-  const [order, setOrder] = useState<ORDER.List | null>(null)
+  const [order, setOrder] = useState<ORDER.Item | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const OrderDetail = () => {
     }
   }
 
-  const statusMap: Record<ORDER.List['status'], { text: string; subText: string; color: string; iconPath?: string }> = {
+  const statusMap: Record<ORDER.Item['status'], { text: string; subText: string; color: string; iconPath?: string }> = {
     pending: { text: '待支付', subText: '您的订单还未支付，请尽快支付！', color: 'text-orange-500' },
     paid: { text: '待发货', subText: '订单已支付，我们会尽快发货。', color: 'text-green-600' },
     shipped: { text: '已发货', subText: '您的订单已发货，感谢您的支持！', color: 'text-blue-500', iconPath: 'https://cdn-icons-png.flaticon.com/512/1048/1048866.png' }, // 替换为真实图标

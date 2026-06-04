@@ -172,7 +172,7 @@ export default function AddressEdit() {
                 }}
                 onChange={(newRegion) => setRegion(newRegion)}
               />
-              <Text className='text-gray-400 text-lg font-light ml-2 flex-shrink-0'>›</Text>
+              <Text className='iconfont icon-next' />
             </View>
           </View>
 
@@ -215,10 +215,10 @@ export default function AddressEdit() {
         {/* 第二部分：默认地址独立卡片 */}
         <View className='bg-white rounded-2xl px-4 py-3.5 flex justify-between items-center shadow-sm'>
           <Text className='text-gray-800 font-medium'>设为默认地址</Text>
-          <Switch 
-            checked={form.isDefault} 
+          <Switch
+            checked={form.isDefault}
             color='#2F77F1'
-            onChange={e => setForm({ ...form, isDefault: e.detail.value })} 
+            onChange={e => setForm({ ...form, isDefault: e.detail.value })}
           />
         </View>
       </View>

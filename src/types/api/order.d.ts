@@ -29,7 +29,7 @@ declare namespace ORDER {
     productName: string
     specId: string
   }
-  type List = {
+  type Item = {
     id: number;
     orderNo: string;
     userId: number;
