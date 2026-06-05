@@ -1,7 +1,7 @@
 import request from "./request";
 
 /** 订单列表 */
-export const orderList = (data: ORDER.CreateReq) => {
+export const orderList = (data) => {
   return request<{ list: ORDER.Item[] }>({
     url: "/orders/list",
     method: "GET",
@@ -14,7 +14,7 @@ export const createOrder = (data) => {
   return request<{ id: number }>({
     url: "/orders",
     method: "POST",
-    data: data as ORDER.CreateReq,
+    data,
   });
 };
 
@@ -23,7 +23,7 @@ export const cancelOrder = (data) => {
   return request<null>({
     url: "/order/cancel",
     method: "POST",
-    data: data as ORDER.CreateReq,
+    data,
   });
 };
 
@@ -32,7 +32,7 @@ export const confirmOrder = (data) => {
   return request<null>({
     url: "/order/confirm",
     method: "POST",
-    data: data as ORDER.CreateReq,
+    data,
   });
 };
 
@@ -41,7 +41,7 @@ export const paySuccess = (data) => {
   return request<null>({
     url: "/order/pay/success",
     method: "POST",
-    data: data as ORDER.CreateReq,
+    data,
   });
 };
 
@@ -58,7 +58,7 @@ export const orderPreview = (data) => {
   return request<any>({
     url: "/order/preview",
     method: "POST",
-    data: data as ORDER.CreateReq,
+    data,
   });
 };
 
@@ -67,6 +67,6 @@ export const orderSubmit = (data) => {
   return request<any>({
     url: "/order/submit",
     method: "POST",
-    data: data as ORDER.CreateReq,
+    data,
   });
 };
