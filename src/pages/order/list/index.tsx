@@ -65,7 +65,7 @@ export default function OrderList() {
     const res = await orderList({
       page,
       pageSize,
-      status: currentStatus === 'all' ? undefined : currentStatus
+      status: currentStatus === 'all' ? '' : currentStatus
     })
     return {
       list: (res.list || []) as OrderItem[],
