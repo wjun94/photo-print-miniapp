@@ -1,10 +1,10 @@
-@import "./css/font.css";
+@import './css/font.css';
 
 page {
   background-color: #f5f5f5;
   font-size: 28px;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, sans-serif;
 }
 
@@ -31,17 +31,24 @@ button.rounded-full {
 }
 
 .line-clamp-2 {
-  display: -webkit-box;           /* 将对象作为弹性伸缩盒子模型显示 */
-  -webkit-box-orient: vertical;   /* 设置伸缩盒子的子元素排列方式为垂直 */
-  -webkit-line-clamp: 2;          /* 限制在一个块元素显示的文本的行数（2行） */
-  overflow: hidden;               /* 隐藏超出的内容 */
-  text-overflow: ellipsis;        /* 溢出部分显示省略号 */
-  
+  display: -webkit-box; /* 将对象作为弹性伸缩盒子模型显示 */
+  -webkit-box-orient: vertical; /* 设置伸缩盒子的子元素排列方式为垂直 */
+  -webkit-line-clamp: 2; /* 限制在一个块元素显示的文本的行数（2行） */
+  overflow: hidden; /* 隐藏超出的内容 */
+  text-overflow: ellipsis; /* 溢出部分显示省略号 */
+
   /* 建议搭配以下属性，确保长单词或数字也能正常换行 */
-  word-break: break-word;         
-  line-height: 1.5;               /* 建议设置固定的行高，视觉效果更好 */
+  word-break: break-word;
+  line-height: 1.5; /* 建议设置固定的行高，视觉效果更好 */
 }
 
 .h5-img {
   width: 100%;
+}
+
+.border-0 {
+  border: 0;
+  &::after {
+    display: none;
+  }
 }

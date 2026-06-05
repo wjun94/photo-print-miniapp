@@ -22,12 +22,37 @@ export default function My() {
 
   // 功能列表数据
   const menuItems = [
-    { id: 'shoyi', label: '收益管理', icon: 'icon-shoyiguanli', url: '/pages/income/index' },
-    { id: 'address', label: '地址管理', icon: 'icon-address', url: '/pages/address/list/index' },
+    {
+      id: 'shoyi',
+      label: '收益管理',
+      icon: 'icon-shoyiguanli',
+      fn: () => {
+        navigate("/pages/income/index")
+      }
+    },
+    {
+      id: 'address',
+      label: '地址管理',
+      icon: 'icon-address',
+      fn: () => {
+        navigate("/pages/address/list/index")
+      }
+    },
+    {
+      id: 'friend',
+      label: '好友列表',
+      icon: 'icon-haoyouleibiao',
+      fn: () => {
+        navigate("/pages/friend/index")
+      }
+    },
+    {
+      id: 'faq',
+      label: '联系客服',
+      icon: 'icon-lianxikefu',
+    },
     // { id: 'coupon', label: '我的优惠券', icon: 'icon-coupon', url: '/pages/coupon/index' },
     // { id: 'icon-favorites-fill', label: '我的收藏', icon: 'icon-favorites-fill', url: '/pages/favorite/index' },
-    { id: 'friend', label: '好友列表', icon: 'icon-haoyouleibiao', url: '/pages/friend/index' },
-    { id: 'faq', label: '常见问题', icon: 'icon-banzhuzhongxin', url: '/pages/faq/index' },
   ]
 
   return (
@@ -91,14 +116,15 @@ export default function My() {
           <Text className='text-32px font-bold p-4 pb-2 block'>我的服务</Text>
           <View className='grid grid-cols-4 gap-0'>
             {menuItems.map((item) => (
-              <View
+              <Button
+                openType={item?.fn ? 'launchApp' : 'contact'}
                 key={item.id}
-                onClick={() => navigate(item.url)}
-                className="flex items-center flex-col text-[#333333] py-2 transition-colors duration-150"
+                onClick={() => item?.fn?.()}
+                className="flex items-center flex-col px-0 text-28px bg-transparent border-0 text-[#333333] py-2 transition-colors duration-150"
               >
                 <Text className={`iconfont ${item.icon} text-56px mb-8px`} />
                 <Text>{item.label}</Text>
-              </View>
+              </Button>
             ))}
           </View>
         </View>
