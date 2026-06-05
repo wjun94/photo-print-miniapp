@@ -82,7 +82,7 @@ export default function ConfirmOrder() {
         Taro.eventCenter.on("addres/select", handleAddressSelect)
 
         return () => {
-            Taro.eventCenter.off("addres/select", handleAddressSelect)
+            Taro.eventCenter.off("addres/select")
         }
     }, [])
 

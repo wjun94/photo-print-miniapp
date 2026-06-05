@@ -48,6 +48,18 @@ export default function My() {
     },
     {
       id: 'faq',
+      label: '邀请好友',
+      icon: 'icon-share',
+    },
+    {
+      id: 'faq',
+      label: '商务合作',
+      icon: 'icon-shangwuhezuo',
+      fn: () => { }
+
+    },
+    {
+      id: 'faq',
       label: '联系客服',
       icon: 'icon-lianxikefu',
     },
@@ -117,12 +129,12 @@ export default function My() {
           <View className='grid grid-cols-4 gap-0'>
             {menuItems.map((item) => (
               <Button
-                openType={item?.fn ? 'launchApp' : 'contact'}
+                openType={item?.icon === "icon-share" ? 'share' : item?.icon === "icon-lianxikefu" ? 'contact' : 'launchApp'}
                 key={item.id}
                 onClick={() => item?.fn?.()}
                 className="flex items-center flex-col px-0 text-28px bg-transparent border-0 text-[#333333] py-2 transition-colors duration-150"
               >
-                <Text className={`iconfont ${item.icon} text-56px mb-8px`} />
+                <Text className={`iconfont ${item.icon} mb-12px text-60px`} />
                 <Text>{item.label}</Text>
               </Button>
             ))}

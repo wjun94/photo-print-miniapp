@@ -1,7 +1,7 @@
 import { View, Button, Text } from '@tarojs/components'
 import { Image } from '@/components'
 import Taro, { useRouter } from '@tarojs/taro'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { uploadMultiImages } from '@/utils/upload'
 
 // 1. 重构数据结构定义
@@ -17,6 +17,21 @@ export default function Upload() {
   // 2. 将 photos 修改为 items
   const [items, setItems] = useState<PhotoItem[]>([])
   const [isUploading, setIsUploading] = useState(false)
+
+  useEffect(() => {
+    Taro.eventCenter.on("/cropper", (value, index) => {
+      setItems((v) => {
+        v[index].imageUrl = value
+        return [...v]
+      })
+      // items[editIdx].imageUrl = value
+      // setItems([...items])
+    })
+
+    return () => {
+      Taro.eventCenter.off("/cropper")
+    }
+  }, [])
 
   // 处理图片选择 (支持最多20张)
   const handleChooseImages = () => {
@@ -168,7 +183,9 @@ export default function Upload() {
                 <Image
                   src={item.imageUrl}
                   className="w-full h-full rounded-14px object-cover border-1px border-solid border-gray-100"
-                  onClick={() => Taro.navigateTo({ url: `/pages/cropper/index?url=${encodeURIComponent(item.imageUrl)}` })}
+                  onClick={() => {
+                    Taro.navigateTo({ url: `/pages/cropper/index?url=${encodeURIComponent(item.imageUrl)}&idx=${idx}` })
+                  }}
                 />
 
                 {/* 右上角圆形删除按钮 */}

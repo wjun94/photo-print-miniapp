@@ -7,11 +7,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/order/upload/index",
+          "pathName": "pages/order/upload/index",
+          "query": "productId=2062372655935262720&specId=2062372681369522176",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "pages/income/index",
           "pathName": "pages/income/index",
           "query": "",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "pages/index/index",
