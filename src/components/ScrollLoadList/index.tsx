@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { ScrollView, View, Text, Image } from '@tarojs/components'
 import type { ScrollViewProps } from '@tarojs/components'
-import NonePng from '@/assets/img/none.png'
 
 export interface RequestResult<T> {
   list: T[]
@@ -201,8 +200,8 @@ const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: 
     if (renderEmpty) return renderEmpty()
     return (
       <View className="flex flex-col justify-center items-center text-gray-400 py-20">
-        <Image mode="widthFix" className="w-180px max-h-180px" src={NonePng} />
-        <Text className="text-28px mt-24px">{emptyText}</Text>
+        <Text className='iconfont icon-none text-68px' />
+        <Text className="text-28px mt-20px">{emptyText}</Text>
       </View>
     )
   }

@@ -1,9 +1,7 @@
 import { useAuthStore } from '@/store'
+import { getImageCdnUrl } from '@/utils'
 import { View, Text, Image, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-
-// 模拟头像图片，可替换为你的真实资源或 CDN 地址
-const defaultAvatar = 'https://api.dicebear.com/7.x/adventurer/svg?seed=cloud'
 
 export default function My() {
   const { userInfo } = useAuthStore()
@@ -14,7 +12,7 @@ export default function My() {
   // 订单状态分类数据
   const orderStates = [
     { id: 'unpaid', label: '待付款', icon: 'icon-wallet' },
-    { id: 'printing', label: '冲印中', icon: 'icon-print' },
+    { id: 'printing', label: '待付款', icon: 'icon-print' },
     { id: 'shipped', label: '已发货', icon: 'icon-truck' },
     { id: 'completed', label: '已完成', icon: 'icon-check-circle' },
     { id: 'cancelled', label: '已取消', icon: 'icon-close-circle' },
@@ -79,17 +77,17 @@ export default function My() {
           <View className='flex items-center gap-4'>
             {/* 头像 */}
             <Image
-              src={defaultAvatar}
-              className='w-16 h-16 rounded-full border-2 border-white bg-blue-50 shadow-sm'
+              src={userInfo?.avatar_url || getImageCdnUrl('avatar_002.png')}
+              className='w-14 h-14 rounded-full border-2 border-solid border-white bg-blue-50 shadow-sm'
             />
             {/* 昵称及签名 */}
             <View className='flex flex-col gap-1'>
-              <Text className='text-xl font-bold text-[#222222] tracking-wide'>你好，小云</Text>
+              <Text className='text-32px font-bold text-[#222222] tracking-wide'>{userInfo?.nickname}</Text>
               <Text className='text-xs text-[#999999]'>ID：{userInfo?.id}</Text>
             </View>
           </View>
           {/* 右侧箭头 */}
-          <Text className='iconfont icon-arrow-right text-[#999999] text-base font-light' />
+          <Text className='iconfont icon-next text-[#999999] text-base font-light' />
         </View>
 
         {/* 2. 我的订单卡片 */}
@@ -102,7 +100,7 @@ export default function My() {
               onClick={() => navigate('/pages/order/list/index?status=all')}
             >
               <Text className='text-xs text-[#999999]'>全部订单</Text>
-              <Text className='iconfont icon-arrow-right text-[#bbbbbb] text-xs' />
+              <Text className='iconfont icon-next text-[#bbbbbb] text-xs' />
             </View>
           </View>
 
