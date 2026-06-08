@@ -1,6 +1,6 @@
 declare namespace USER {
   export interface Info {
-    id: number;
+    id: string;
     open_id: string;
     union_id?: string;
     nickname: string;

@@ -92,7 +92,15 @@ export default function My() {
             />
             <View className='flex flex-col gap-2'>
               <Text className='text-32px font-bold text-[#222222] tracking-wide'>{userInfo?.nickname || '暂无昵称'}</Text>
-              <Text className='text-24px text-[#999999]'>ID：{userInfo?.id}</Text>
+              <Text className='text-26px text-gray-500'>
+                ID：{userInfo?.id}
+                <Text
+                  className='iconfont icon-copy ml-1 text-26px'
+                  onClick={() => {
+                    Taro.setClipboardData({ data: userInfo?.id || '' })
+                  }}
+                />
+              </Text>
             </View>
           </View>
           <Text className='iconfont icon-next text-[#999999] text-base font-light' />
