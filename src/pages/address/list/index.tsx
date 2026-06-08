@@ -100,15 +100,6 @@ export default function AddressList() {
 
               {/* 右侧：动作按钮组 */}
               <View className='flex items-center gap-5'>
-                {/* 编辑 */}
-                <View
-                  className='flex items-center gap-1.5 text-gray-600 active:opacity-70'
-                  onClick={() => editAddress(addr.id)}
-                >
-                  <Text className='iconfont icon-edit' />
-                  <Text>编辑</Text>
-                </View>
-
                 {/* 删除 */}
                 <View
                   className='flex items-center gap-1.5 text-gray-600 active:opacity-70'
@@ -117,7 +108,14 @@ export default function AddressList() {
                   <Text className='iconfont icon-delete' />
                   <Text>删除</Text>
                 </View>
-
+                {/* 编辑 */}
+                <View
+                  className='flex items-center gap-1.5 text-gray-600 active:opacity-70'
+                  onClick={() => editAddress(addr.id)}
+                >
+                  <Text className='iconfont icon-edit' />
+                  <Text>编辑</Text>
+                </View>
                 {/* 复制 */}
                 <View
                   className='flex items-center gap-1.5 text-gray-600 active:opacity-70'

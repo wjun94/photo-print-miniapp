@@ -31,11 +31,10 @@ export default function My() {
 
   // 订单状态分类数据
   const orderStates = [
-    { id: 'unpaid', label: '待付款', icon: 'icon-wallet' },
-    { id: 'printing', label: '待付款', icon: 'icon-print' },
-    { id: 'shipped', label: '已发货', icon: 'icon-truck' },
-    { id: 'completed', label: '已完成', icon: 'icon-check-circle' },
-    { id: 'cancelled', label: '已取消', icon: 'icon-close-circle' },
+    { id: 'unpaid', label: '待付款', icon: 'icon-unpaid' },
+    { id: 'printing', label: '待发货', icon: 'icon-printing' },
+    { id: 'shipped', label: '已发货', icon: 'icon-shipped' },
+    { id: 'completed', label: '已完成', icon: 'icon-completed' },
   ]
 
   // 功能列表数据
@@ -101,27 +100,25 @@ export default function My() {
 
         {/* 我的订单卡片 */}
         <View className='bg-white rounded-20px p-4 shadow-sm mb-4 border border-solid border-white'>
-          <View className='flex justify-between items-center mb-5'>
+          <View className='flex justify-between items-center mb-3'>
             <Text className='text-base font-bold text-[#333333]'>我的订单</Text>
             <View
-              className='flex items-center gap-0.5 active:opacity-70'
+              className='flex items-center gap-0.5 text-gray-500 active:opacity-70'
               onClick={() => navigate('/pages/order/list/index?status=all')}
             >
-              <Text className='text-xs text-[#999999]'>全部订单</Text>
-              <Text className='iconfont icon-next text-[#bbbbbb] text-xs' />
+              <Text className='text-24px'>全部订单</Text>
+              <Text className='iconfont icon-next text-24px' />
             </View>
           </View>
-          <View className='grid grid-cols-5 gap-0'>
+          <View className='flex justify-between px-12px'>
             {orderStates.map((item) => (
               <View
                 key={item.id}
-                className='flex flex-col items-center gap-2 active:opacity-70'
+                className='flex flex-col items-center gap-1 active:opacity-70'
                 onClick={() => navigate(`/pages/order/list/index?status=${item.id}`)}
               >
-                <View className='w-7 h-7 flex items-center justify-center text-[#3b82f6]'>
-                  <Text className={`iconfont ${item.icon} text-2xl`} />
-                </View>
-                <Text className='text-xs text-[#555555] font-medium'>{item.label}</Text>
+                <Text className={`iconfont ${item.icon} text-64px`} />
+                <Text>{item.label}</Text>
               </View>
             ))}
           </View>
@@ -164,7 +161,7 @@ export default function My() {
             showMenuByLongpress
           />
           <Text
-            className='mt-4 text-26px text-gray-500'
+            className='mt-2 text-gray-500'
           >
             长按图片保存二维码
           </Text>
