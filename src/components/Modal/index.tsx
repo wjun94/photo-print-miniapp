@@ -11,6 +11,8 @@ export interface ModalProps {
   confirmText?: string
   /** 取消按钮文字，默认：取消 */
   cancelText?: string
+  /** 是否显示取消按钮，默认：true */
+  showCancel?: boolean
   /** 点击确认回调 */
   onConfirm?: () => void
   /** 点击取消回调 */
@@ -26,6 +28,7 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
   title = '温馨提示',
   confirmText = '确定',
   cancelText = '取消',
+  showCancel = true,
   onConfirm,
   onCancel,
   maskClosable = true,
@@ -73,9 +76,9 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
           {children}
         </View>
 
-        {/* 底部按钮区域，圆角按钮 */}
+        {/* 底部按钮区域 */}
         <View className='flex flex-row justify-center gap-3 px-5 pb-5 pt-2'>
-          {cancelText && (
+          {showCancel && (
             <View
               className='w-210px text-center py-2 bg-gray-100 rounded-full text-gray-700 text-center active:bg-gray-200 transition-colors cursor-pointer min-w-[80px]'
               onClick={handleCancel}
@@ -85,7 +88,7 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
           )}
           {confirmText && (
             <View
-              className='w-210px text-center py-2 bg-blue-500 rounded-full text-white text-center active:bg-blue-600 transition-colors cursor-pointer min-w-[80px]'
+              className={`${showCancel ? 'w-210px' : 'w-[85%]'} text-center py-2 bg-blue-500 rounded-full text-white text-center active:bg-blue-600 transition-colors cursor-pointer min-w-[80px]`}
               onClick={handleConfirm}
             >
               {confirmText}

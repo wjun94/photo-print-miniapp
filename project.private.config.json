@@ -7,64 +7,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/order/upload/index",
-          "pathName": "pages/order/upload/index",
-          "query": "productId=2062372655935262720&specId=2062372681369522176",
-          "scene": null,
-          "launchMode": "default"
-        },
-        {
-          "name": "pages/income/index",
-          "pathName": "pages/income/index",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/index/index",
-          "pathName": "pages/index/index",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "订单详情",
-          "pathName": "pages/order/detail/index",
-          "query": "id=2060185226730016768",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/order/detail/index",
-          "pathName": "pages/order/detail/index",
-          "query": "id=2059999807153377280",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/address/list/index",
-          "pathName": "pages/address/list/index",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
           "name": "我的",
           "pathName": "pages/mine/index",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "订单列表",
-          "pathName": "pages/order/list/index",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "裁剪照片",
-          "pathName": "pages/cropper/index",
           "query": "",
           "launchMode": "default",
           "scene": null
