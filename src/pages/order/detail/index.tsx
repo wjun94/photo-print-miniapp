@@ -42,9 +42,6 @@ const OrderDetail = () => {
     if (order?.orderNo) {
       Taro.setClipboardData({
         data: order.orderNo,
-        success: () => {
-          Taro.showToast({ title: '复制成功', icon: 'none' })
-        },
       })
     }
   }
@@ -55,7 +52,7 @@ const OrderDetail = () => {
     <View className='min-h-screen flex flex-col px-4 pt-4'>
       <ScrollView className='flex-1 pb-20'>
         {/* 订单状态横幅 */}
-        <View className='flex items-center p-4 bg-white mb-4 rounded-20px'>
+        <View className='p-4 bg-white mb-4 rounded-20px'>
           <View>
             <Text className={`text-30px`}>
               订单状态：<Text className={currentStatus.color}>{currentStatus.text}</Text>
@@ -67,15 +64,38 @@ const OrderDetail = () => {
         </View>
 
         {/* 收货地址 */}
-        <View className='bg-white rounded-lg p-4 mb-4 rounded-20px flex items-start'>
-          <Text className='iconfont icon-shou text-red-500 mr-2 text-42px flex-shrink-0' />
-          <View className='flex-1'>
-            <View className='flex items-center mb-2 text-36px font-bold text-gray-900'>
-              <Text className='mr-4'>{order.address.receiverName}</Text>
-              <Text>{order.address.mobile}</Text>
-            </View>
-            <View className='text-28px text-gray-600 leading-relaxed'>
-              {order.address.provinceName} {order.address.cityName} {order.address.districtName} {order.address.detail} {order.address.doorplate}
+        <View className='bg-white rounded-lg p-4 mb-4 rounded-20px'>
+          {order?.logistics?.length ? <View className='flex bb pb-2 mb-3 text-gray-500'>
+            <Text className='iconfont icon-logistics text-40px text-blue-400 mr-2' />
+            {
+              order?.logistics?.map(item => <View key={item.id}>
+                <View className='flex items-center'>
+                  <Text>{item.courierName}：</Text>
+                  <Text>{item.trackingNo}
+                    <Text
+                      className='iconfont icon-copy text-26px ml-1'
+                      onClick={() => {
+                        Taro.setClipboardData({
+                          data: item.trackingNo,
+                        })
+                      }}
+                    />
+                  </Text>
+                </View>
+                <Text className='text-24px'>{item.createdAt}</Text>
+              </View>)
+            }
+          </View> : null}
+          <View className='flex'>
+            <Text className='iconfont icon-shou text-red-500 mr-2 text-42px flex-shrink-0' />
+            <View className='flex-1'>
+              <View className='flex items-center mb-2 text-36px font-bold text-gray-900'>
+                <Text className='mr-4'>{order.address.receiverName}</Text>
+                <Text>{order.address.mobile}</Text>
+              </View>
+              <View className='text-28px text-gray-600 leading-relaxed'>
+                {order.address.provinceName} {order.address.cityName} {order.address.districtName} {order.address.detail} {order.address.doorplate}
+              </View>
             </View>
           </View>
         </View>

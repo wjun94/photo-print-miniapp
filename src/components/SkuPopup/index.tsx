@@ -59,7 +59,7 @@ export default function SkuPopup({ visible, product, selectedSpec, onClose, onCo
             <View catchMove className='fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 p-4 animate-slide-up'>
                 {/* 商品缩略信息 */}
                 <View className='flex mb-4'>
-                    <Image src={product.coverImage} className='w-24 h-24 rounded-lg mr-3' mode='aspectFill' />
+                    <Image preview src={product.coverImage} className='w-24 h-24 rounded-lg mr-3' mode='aspectFill' />
                     <View className='flex-1'>
                         <View className='text-red-500 text-xl font-bold'>¥{price.toFixed(2)}</View>
                         <View className='text-gray-500 text-sm'>库存 {stock} 件</View>
