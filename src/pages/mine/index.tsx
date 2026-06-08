@@ -90,9 +90,9 @@ export default function My() {
               src={userInfo?.avatar_url || getImageCdnUrl('avatar_002.png')}
               className='w-14 h-14 rounded-full border-2 border-solid border-white bg-blue-50 shadow-sm'
             />
-            <View className='flex flex-col gap-1'>
-              <Text className='text-32px font-bold text-[#222222] tracking-wide'>{userInfo?.nickname}</Text>
-              <Text className='text-xs text-[#999999]'>ID：{userInfo?.id}</Text>
+            <View className='flex flex-col gap-2'>
+              <Text className='text-32px font-bold text-[#222222] tracking-wide'>{userInfo?.nickname || '暂无昵称'}</Text>
+              <Text className='text-24px text-[#999999]'>ID：{userInfo?.id}</Text>
             </View>
           </View>
           <Text className='iconfont icon-next text-[#999999] text-base font-light' />
@@ -101,7 +101,7 @@ export default function My() {
         {/* 我的订单卡片 */}
         <View className='bg-white rounded-20px p-4 shadow-sm mb-4 border border-solid border-white'>
           <View className='flex justify-between items-center mb-3'>
-            <Text className='text-base font-bold text-[#333333]'>我的订单</Text>
+            <Text className='text-32px font-bold'>我的订单</Text>
             <View
               className='flex items-center gap-0.5 text-gray-500 active:opacity-70'
               onClick={() => navigate('/pages/order/list/index?status=all')}
