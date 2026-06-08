@@ -158,7 +158,7 @@ const OrderDetail = () => {
 
       {/* 底部按钮 */}
       <View className='flex justify-end items-end p-4 bg-white fixed bottom-0 left-0 right-0' >
-        <OrderActionButtons order={order} />
+        <OrderActionButtons onRefresh={() => fetchDetail()} order={order} />
       </View >
     </View >
   )

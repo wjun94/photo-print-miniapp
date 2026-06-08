@@ -177,7 +177,7 @@ export default function OrderList() {
               取消订单
             </Button>
             <Button
-              className="py-2 px-4 mx-0 ml-2 rounded-full border-none bg-primary-500 text-white text-sm font-normal"
+              className="py-2 px-4 mx-0 ml-2 rounded-full border-none bg-primary-400 text-white text-sm font-normal"
               onClick={(e) => {
                 e.stopPropagation()
                 openModal('pay', order.id)

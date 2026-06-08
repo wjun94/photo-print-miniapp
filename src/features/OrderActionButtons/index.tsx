@@ -40,11 +40,11 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({ order, onRefres
     try {
       setLoading(true)
       await paySuccess({ orderid: order.id })
-      Taro.showToast({ title: '支付成功', icon: 'success' })
+      Taro.showToast({ title: '支付成功', icon: 'none' })
       closeModal()
       refreshList()
     } catch (error) {
-      Taro.showToast({ title: '支付失败，请重试', icon: 'error' })
+      Taro.showToast({ title: '支付失败，请重试', icon: 'none' })
     } finally {
       setLoading(false)
     }
@@ -56,11 +56,11 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({ order, onRefres
     try {
       setLoading(true)
       await cancelOrder({ orderId: order.id })
-      Taro.showToast({ title: '订单已取消', icon: 'success' })
+      Taro.showToast({ title: '订单已取消', icon: 'none' })
       closeModal()
       refreshList()
     } catch (error) {
-      Taro.showToast({ title: '取消失败，请重试', icon: 'error' })
+      Taro.showToast({ title: '取消失败，请重试', icon: 'none' })
     } finally {
       setLoading(false)
     }
@@ -72,11 +72,11 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({ order, onRefres
     try {
       setLoading(true)
       await confirmOrder({ orderId: order.id })
-      Taro.showToast({ title: '确认收货成功', icon: 'success' })
+      Taro.showToast({ title: '确认收货成功', icon: 'none' })
       closeModal()
       refreshList()
     } catch (error) {
-      Taro.showToast({ title: '操作失败，请重试', icon: 'error' })
+      Taro.showToast({ title: '操作失败，请重试', icon: 'none' })
     } finally {
       setLoading(false)
     }
