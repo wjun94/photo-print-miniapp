@@ -4,24 +4,6 @@ import { useState, useCallback, useRef } from 'react'
 import { orderList, paySuccess, confirmOrder, cancelOrder } from '@/api/order'
 import { ScrollLoadList, Image, Modal, ScrollLoadListRef } from '@/components'
 
-// 模拟扩展后的订单数据结构（供参考）
-interface OrderItem {
-  id: number
-  orderNo: string
-  status: 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled'
-  createdAt: string
-  specs: {
-    productName: string
-    specName: string
-    specId: string
-    imageUrl: string
-    price: number
-    quantity: number
-    totalQuantity: number
-    totalSubtotal: number
-  }[]
-}
-
 // 弹窗类型定义
 type ModalType = 'pay' | 'cancel' | 'confirm' | null
 
@@ -67,7 +49,7 @@ export default function OrderList() {
       status: currentStatus === 'all' ? '' : currentStatus
     })
     return {
-      list: (res.list || []) as OrderItem[],
+      list: (res.list || []) as ORDER.Item[],
     }
   }
 
@@ -180,11 +162,11 @@ export default function OrderList() {
   }, [modalType, handlePay, handleCancelOrder, handleConfirmOrder])
 
   // 根据订单状态渲染操作按钮
-  const renderActionButtons = (order: OrderItem) => {
+  const renderActionButtons = (order: ORDER.Item) => {
     switch (order.status) {
       case 'pending':
         return (
-          <View className="flex justify-end items-end">
+          <>
             <Button
               className="py-2 px-4 mx-0 rounded-full bg-white text-gray-600 text-sm font-normal"
               onClick={(e) => {
@@ -195,7 +177,7 @@ export default function OrderList() {
               取消订单
             </Button>
             <Button
-              className="py-2 px-4 mx-0 ml-2 rounded-full border-none bg-gradient-to-r from-red-400 to-red-500 text-white text-sm font-normal"
+              className="py-2 px-4 mx-0 ml-2 rounded-full border-none bg-primary-500 text-white text-sm font-normal"
               onClick={(e) => {
                 e.stopPropagation()
                 openModal('pay', order.id)
@@ -203,15 +185,16 @@ export default function OrderList() {
             >
               立即支付
             </Button>
-          </View>
+          </>
         )
       case 'shipped':
         return (
           <Button
-            className="h-8 px-4 rounded-full border-none bg-gradient-to-r from-red-400 to-red-500 text-white text-sm font-normal"
+            className="py-2 mx-0 w-[max-content] px-4 rounded-full border-none bg-primary-400 text-white text-sm font-normal"
             onClick={(e) => {
               e.stopPropagation()
-              openModal('confirm', order.id)
+              setModalType('confirm')
+              setModalVisible(true)
             }}
           >
             确认收货
@@ -226,7 +209,7 @@ export default function OrderList() {
   }
 
   // 渲染单个订单卡片 (完全对齐 UI 图)
-  const renderItem = (order: OrderItem) => (
+  const renderItem = (order: ORDER.Item) => (
     <View
       className='mx-4 mt-3 bg-white rounded-2xl p-4 active:opacity-90 transition-all'
       onClick={() => goToDetail(order.id)}
@@ -272,7 +255,9 @@ export default function OrderList() {
         </View>
         )
       }
-      {renderActionButtons(order)}
+      <View className="flex justify-end items-end">
+        {renderActionButtons(order)}
+      </View>
     </View>
   )
 

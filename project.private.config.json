@@ -7,6 +7,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "我的订单",
+          "pathName": "pages/order/list/index",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "我的",
           "pathName": "pages/mine/index",
           "query": "",

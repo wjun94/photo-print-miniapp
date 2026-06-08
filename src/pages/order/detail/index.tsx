@@ -3,6 +3,7 @@ import { Image } from '@/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { getOrder } from '@/api/order'
 import { useEffect, useState } from 'react'
+import { OrderActionButtons } from '@/features'
 
 const OrderDetail = () => {
   const router = useRouter()
@@ -51,7 +52,7 @@ const OrderDetail = () => {
   if (loading) return <View className='text-center py-10'>加载中...</View>
   if (!order) return <View className='text-center py-10'>订单不存在</View>
   return (
-    <View className='min-h-screen bg-gray-100 flex flex-col px-4 pt-4'>
+    <View className='min-h-screen flex flex-col px-4 pt-4'>
       <ScrollView className='flex-1 pb-20'>
         {/* 订单状态横幅 */}
         <View className='flex items-center p-4 bg-white mb-4 rounded-20px'>
@@ -156,10 +157,8 @@ const OrderDetail = () => {
       </ScrollView >
 
       {/* 底部按钮 */}
-      < View className='flex justify-center p-4 bg-gray-100 fixed bottom-0 left-0 right-0' >
-        <View className='flex items-center justify-center bg-blue-600 rounded-full py-4 px-10 text-white font-bold w-full max-w-lg'>
-          联系客服
-        </View>
+      <View className='flex justify-end items-end p-4 bg-white fixed bottom-0 left-0 right-0' >
+        <OrderActionButtons order={order} />
       </View >
     </View >
   )

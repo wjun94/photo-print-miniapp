@@ -103,7 +103,7 @@ export default function My() {
               </Text>
             </View>
           </View>
-          <Text className='iconfont icon-next text-[#999999] text-base font-light' />
+          <Text className='iconfont icon-setting text-42px text-[#999]' />
         </View>
 
         {/* 我的订单卡片 */}
@@ -114,8 +114,8 @@ export default function My() {
               className='flex items-center gap-0.5 text-gray-500 active:opacity-70'
               onClick={() => navigate('/pages/order/list/index?status=all')}
             >
-              <Text className='text-24px'>全部订单</Text>
-              <Text className='iconfont icon-next text-24px' />
+              <Text>全部订单</Text>
+              <Text className='iconfont icon-next ml-1' />
             </View>
           </View>
           <View className='flex justify-between px-12px'>

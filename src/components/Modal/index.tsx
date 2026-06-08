@@ -21,6 +21,9 @@ export interface ModalProps {
   maskClosable?: boolean
   /** 自定义内容区域类名 */
   contentClassName?: string
+  // --- 新增属性 ---
+  /** 确认按钮加载状态 */
+  confirmLoading?: boolean
 }
 
 const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
@@ -34,6 +37,8 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
   maskClosable = true,
   children,
   contentClassName = '',
+  // --- 解构新属性 ---
+  confirmLoading = false,
 }) => {
   if (!visible) return null
 
@@ -43,11 +48,17 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
     }
   }
 
+  // --- 确认按钮点击处理 ---
   const handleConfirm = () => {
-    onConfirm?.()
+    // 如果处于 loading 状态，则不触发回调
+    if (!confirmLoading) {
+      onConfirm?.()
+    }
   }
 
   const handleCancel = () => {
+    // 如果处于 loading 状态，通常仍允许取消，但也可以根据需求禁止
+    // 这里保持允许取消
     onCancel?.()
   }
 
@@ -88,10 +99,17 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
           )}
           {confirmText && (
             <View
-              className={`${showCancel ? 'w-210px' : 'w-[85%]'} text-center py-2 bg-blue-500 rounded-full text-white text-center active:bg-blue-600 transition-colors cursor-pointer min-w-[80px]`}
+              // --- 按钮类名逻辑 ---
+              className={`
+                ${showCancel ? 'w-210px' : 'w-[85%]'} 
+                text-center py-2 rounded-full text-white text-center transition-colors cursor-pointer min-w-[80px]
+                // 根据 loading 状态切换背景色和手指样式
+                ${confirmLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 active:bg-blue-600'}
+              `}
               onClick={handleConfirm}
             >
-              {confirmText}
+              {/* --- 按钮文字逻辑 --- */}
+              {confirmLoading ? '加载中...' : confirmText}
             </View>
           )}
         </View>

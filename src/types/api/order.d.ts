@@ -1,5 +1,5 @@
 declare namespace ORDER {
-  type OrderStatus =
+  type Status =
     | "pending" // 待付款
     | "paid"  // 已付款/待发货
     | "shipped" // 已发货
@@ -29,18 +29,28 @@ declare namespace ORDER {
     productName: string
     specId: string
   }
+  type SpecsItem = {
+    productName: string
+    specName: string
+    specId: string
+    imageUrl: string
+    price: number
+    quantity: number
+    totalQuantity: number
+    totalSubtotal: number
+  }
   type Item = {
     id: number;
     orderNo: string;
     userId: number;
-    status: OrderStatus;
+    status: Status;
     address: ADDRESS.Items;
     createdAt: string;
     actualAmount: string
     freight: string
     amount: string
     items?: OrderItem[];
-    specs?: OrderItem[];
+    specs?: SpecsItem[];
   }
   export interface ItemRequest {
     productId: string
