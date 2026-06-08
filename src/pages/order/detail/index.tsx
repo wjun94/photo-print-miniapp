@@ -25,10 +25,10 @@ const OrderDetail = () => {
     }
   }
 
-  const statusMap: Record<ORDER.Item['status'], { text: string; subText: string; color: string; iconPath?: string }> = {
+  const statusMap: Record<ORDER.Item['status'], { text: string; subText: string; color: string; }> = {
     pending: { text: '待支付', subText: '您的订单还未支付，请尽快支付！', color: 'text-orange-500' },
-    paid: { text: '待发货', subText: '订单已支付，我们会尽快发货。', color: 'text-green-600' },
-    shipped: { text: '已发货', subText: '您的订单已发货，感谢您的支持！', color: 'text-blue-500', iconPath: 'https://cdn-icons-png.flaticon.com/512/1048/1048866.png' }, // 替换为真实图标
+    paid: { text: '待发货', subText: '订单已支付，我们会尽快发货。', color: 'text-blue-500' },
+    shipped: { text: '已发货', subText: '您的订单已发货，感谢您的支持！', color: 'text-blue-500' },
     refunding: { text: '退款中', subText: '您的订单正在制作中。', color: 'text-red-400' },
     refunded: { text: '已退款', subText: '您的订单正在制作中。', color: 'text-red-400' },
     completed: { text: '已完成', subText: '感谢您的支持，欢迎再次光临！', color: 'text-green-700' },
@@ -55,10 +55,9 @@ const OrderDetail = () => {
       <ScrollView className='flex-1 pb-20'>
         {/* 订单状态横幅 */}
         <View className='flex items-center p-4 bg-white mb-4 rounded-20px'>
-          {currentStatus.iconPath && <Image src={currentStatus.iconPath} className='w-12 h-12 mr-4' mode='aspectFit' />}
           <View>
-            <Text className={`text-30px font-bold ${currentStatus.color}`}>
-              订单状态：{currentStatus.text}
+            <Text className={`text-30px`}>
+              订单状态：<Text className={currentStatus.color}>{currentStatus.text}</Text>
             </Text>
             <Text className='text-gray-500 text-sm mt-3 block'>
               {currentStatus.subText}

@@ -50,9 +50,8 @@ export default function OrderList() {
   const statusText = {
     pending: { text: '待支付', color: 'text-orange-500' },
     paid: { text: '待发货', color: 'text-blue-500' },
-    processing: { text: '处理中', color: 'text-blue-500' },
     shipped: { text: '已发货', color: 'text-blue-500' },
-    completed: { text: '已完成', color: 'text-green-500' },
+    completed: { text: '已完成', color: 'text-green-700' },
     cancelled: { text: '已取消', color: 'text-gray-500' },
   }
 

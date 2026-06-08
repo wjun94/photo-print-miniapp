@@ -41,7 +41,7 @@ export interface ScrollLoadListRef {
   refresh: () => void
 }
 
-const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: React.Ref<ScrollLoadListRef>) => {
+const ScrollLoadList = forwardRef(<T = any>(props: ScrollLoadListProps<T>, ref: React.Ref<ScrollLoadListRef | any>) => {
   const {
     request,
     renderItem,

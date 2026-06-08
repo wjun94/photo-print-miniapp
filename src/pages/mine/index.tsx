@@ -122,7 +122,7 @@ export default function My() {
             {orderStates.map((item) => (
               <View
                 key={item.id}
-                className='flex flex-col items-center gap-1 active:opacity-70'
+                className='flex flex-col items-center gap-1 text-[#333] active:opacity-70'
                 onClick={() => navigate(`/pages/order/list/index?status=${item.id}`)}
               >
                 <Text className={`iconfont ${item.icon} text-64px`} />
@@ -141,7 +141,7 @@ export default function My() {
                 key={item.id}
                 openType={item.openType as any}
                 onClick={() => item.fn?.()}
-                className='flex items-center flex-col px-0 text-28px bg-transparent border-0 text-[#333333] py-2 transition-colors duration-150'
+                className='flex items-center flex-col px-0 text-28px bg-transparent border-0 text-[#333] py-2 transition-colors duration-150'
               >
                 <Text className={`iconfont ${item.icon} mb-12px text-60px`} />
                 <Text>{item.label}</Text>
