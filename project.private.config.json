@@ -7,13 +7,6 @@
     "miniprogram": {
       "list": [
         {
-          "name": "订单详情",
-          "pathName": "pages/order/detail/index",
-          "query": "id=2063978581540737024",
-          "scene": null,
-          "launchMode": "default"
-        },
-        {
           "name": "我的订单",
           "pathName": "pages/order/list/index",
           "query": "",

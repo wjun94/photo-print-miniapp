@@ -2,7 +2,7 @@
   "miniprogramRoot": "dist/",
   "projectname": "photo-print-miniapp",
   "description": "上传打印照片",
-  "appid": "wx7ce22bfac91039a9",
+  "appid": "wxa58b898eef562425",
   "setting": {
     "urlCheck": true,
     "es6": true,
