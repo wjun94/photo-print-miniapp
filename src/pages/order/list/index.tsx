@@ -308,6 +308,7 @@ export default function OrderList() {
         confirmText={modalConfig.confirmText}
         onCancel={closeModal}
         onConfirm={modalConfig.onConfirm}
+        contentClassName="w-420px mx-auto"
       />
     </View>
   )
