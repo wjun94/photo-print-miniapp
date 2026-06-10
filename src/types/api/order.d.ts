@@ -64,8 +64,9 @@ declare namespace ORDER {
     logistics?: Logistics[];
   };
   export interface ItemRequest {
-    productId: string;
-    specId: string;
+    imageUrl: string
+    productId?: string;
+    specId?: string;
     quantity: number;
   }
 

@@ -4,7 +4,7 @@ import Taro, { useRouter } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import { uploadMultiImages } from '@/utils/upload'
 
-// 1. 重构数据结构定义
+// 数据结构定义
 interface PhotoItem {
   id: string
   imageUrl: string
@@ -13,41 +13,56 @@ interface PhotoItem {
 }
 
 export default function Upload() {
-  const { params: { productId, specId } } = useRouter()
-  // 2. 将 photos 修改为 items
+  const router = useRouter()
+
+  // 存储从上一个页面解出的完整业务参数
+  const [orderRouteParams, setOrderRouteParams] = useState<{
+    productId?: string
+    specId?: string
+    skuKey?: string
+    price?: number
+  }>({})
+
   const [items, setItems] = useState<PhotoItem[]>([])
   const [isUploading, setIsUploading] = useState(false)
 
+  // 解析上游页面编码后的特殊 params 路由参数 + 监听裁剪回调
   useEffect(() => {
+    // 解析路由参数逻辑
+    if (router.params?.params) {
+      try {
+        const decodedJson = JSON.parse(decodeURIComponent(router.params.params))
+        setOrderRouteParams(decodedJson)
+      } catch (e) {
+        console.error('解析上游路由参数 params 失败：', e)
+        Taro.showToast({ title: '参数解析异常', icon: 'none' })
+      }
+    }
+
+    // 监听图片裁剪逻辑
     Taro.eventCenter.on("/cropper", (value, index) => {
       setItems((v) => {
-        v[index].imageUrl = value
+        if (v[index]) {
+          v[index].imageUrl = value
+        }
         return [...v]
       })
-      // items[editIdx].imageUrl = value
-      // setItems([...items])
     })
 
     return () => {
       Taro.eventCenter.off("/cropper")
     }
-  }, [])
+  }, [router.params])
 
-  // 处理图片选择 (支持最多20张)
+  // 处理图片选择 (已解除最多 20 张限制)
   const handleChooseImages = () => {
-    const remaining = 20 - items.length
-    if (remaining <= 0) {
-      Taro.showToast({ title: '最多上传20张照片', icon: 'none' })
-      return
-    }
-
     Taro.chooseImage({
-      count: remaining,
+      count: 9, // 单次调起相册建议保持微信标准的 9 张，用户可以分批多次追加上传
       sizeType: ['original'],
       sourceType: ['album', 'camera'],
       success: (res) => {
         const tempFiles = res.tempFiles
-        const MAX_SIZE = 20 * 1024 * 1024 // 调整为 UI 稿中的 20MB
+        const MAX_SIZE = 20 * 1024 * 1024 // 单张 20MB 限制
         if (tempFiles.some(file => file.size > MAX_SIZE)) {
           Taro.showToast({ title: '单张图片大小不能超过 20MB', icon: 'none' })
           return
@@ -105,6 +120,7 @@ export default function Upload() {
   const handleOrderSubmit = async () => {
     const pendingItems = items.filter(p => p.status !== 'success')
 
+    // 如果全部都已经是 success 状态，直接带入下一步
     if (pendingItems.length === 0 && items.length > 0) {
       navigateToOrder(items)
       return
@@ -117,23 +133,34 @@ export default function Upload() {
       const filePaths = pendingItems.map(p => p.imageUrl)
       setItems(prev => prev.map(p => p.status === 'local' ? { ...p, status: 'uploading' } : p))
 
+      // 调用接口进行批量多图真实上传
       const response = await uploadMultiImages(filePaths)
 
       let serverDataIdx = 0
       const updatedItems = items.map(p => {
         if (p.status !== 'success') {
           const serverUrl = response[serverDataIdx++]
+          // 判断后端是否正常返回了含 upload 的有效云端路径
+          const isSuccess = serverUrl && (serverUrl.includes("upload/") || serverUrl.includes("upload-dev/"))
           return {
             ...p,
-            status: (serverUrl.includes("upload/") || serverUrl.includes("upload-dev/")) ? 'success' as const : 'fail' as const,
+            status: isSuccess ? ('success' as const) : ('fail' as const),
             imageUrl: serverUrl || p.imageUrl
           }
         }
         return p
       })
+
       setItems(updatedItems)
       Taro.hideLoading()
       setIsUploading(false)
+
+      // 如果有任何一张图上传失败了，拦截不向下流转，让用户看清是哪张失败并重试
+      if (updatedItems.some(p => p.status === 'fail')) {
+        Taro.showToast({ title: '部分图片上传失败，请点击重试', icon: 'none' })
+        return
+      }
+
       navigateToOrder(updatedItems)
     } catch (error) {
       console.error('上传失败', error)
@@ -144,14 +171,29 @@ export default function Upload() {
     }
   }
 
+  // 核心跳转对齐逻辑：合并上游透传来的业务字段，共同抛给下一页
   const navigateToOrder = (allItems: PhotoItem[]) => {
     const successItems = allItems.filter(p => p.status === 'success')
     if (!successItems.length) {
       Taro.showToast({ title: '请选择并成功上传图片', icon: 'none' })
       return
     }
+
+    // 重新打平并组装传递给下一阶段的最终形态大参数
+    const finalOrderParams = {
+      productId: orderRouteParams.productId || '',
+      specId: orderRouteParams.specId || '',
+      skuKey: orderRouteParams.skuKey || '',
+      price: orderRouteParams.price || 0,
+      // 提取图片上传完毕的合法云地址集合与各自修改的印制数量
+      items: successItems.map(item => ({
+        imageUrl: item.imageUrl,
+        quantity: item.quantity
+      }))
+    }
+
     Taro.navigateTo({
-      url: `../confirm/index?productId=${productId}&specId=${specId}&items=${JSON.stringify(allItems.map(item => ({ imageUrl: item.imageUrl, quantity: item.quantity })))}`
+      url: `../confirm/index?params=${encodeURIComponent(JSON.stringify(finalOrderParams))}`
     })
   }
 
@@ -232,7 +274,7 @@ export default function Upload() {
             </View>
           ))}
 
-          {/* 最后的 “继续上传” 虚线框占位按钮 */}
+          {/* 最后的 “继续上传” 虚线框占位按钮 —— 已开放，支持不限图片张数追加 */}
           <View
             className="flex flex-col items-center justify-center h-240px aspect-square border-1px border-dashed border-gray-300 rounded-14px bg-[#f4f5fb] active:bg-gray-100 text-gray-500"
             onClick={handleChooseImages}
