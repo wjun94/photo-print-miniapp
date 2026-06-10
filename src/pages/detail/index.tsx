@@ -91,7 +91,7 @@ export default function ProductDetail() {
             </View>
 
             {/* 3. 选择规格栏（点击触发弹窗） */}
-            <View className='bg-white p-4 mt-2 flex justify-between items-center active:bg-gray-50' onClick={openSkuPopup}>
+            {/* <View className='bg-white p-4 mt-2 flex justify-between items-center active:bg-gray-50' onClick={openSkuPopup}>
                 <View className='text-gray-800 text-sm font-medium'>选择规格</View>
                 <View className='flex items-center flex-1 justify-end pr-1 text-sm'>
                     <View className={selectedSpec ? 'text-gray-800' : 'text-gray-400'}>
@@ -99,7 +99,7 @@ export default function ProductDetail() {
                     </View>
                     <Text className="iconfont icon-next ml-2 text-gray-400 text-xs" />
                 </View>
-            </View>
+            </View> */}
 
             {/* 新增高颜值营销服务标签栏：动态匹配满额包邮/无包邮策略 */}
             <View className='bg-white px-4 py-3 mt-2 flex items-center justify-between border-b border-solid border-gray-50 shadow-sm'>
@@ -110,15 +110,15 @@ export default function ProductDetail() {
                             满 ¥{Number(freeShippingMinAmount).toFixed(2)} 包邮
                         </View>
                     ) : (
-                        <View className='flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-md mr-3 text-xs font-medium'>
+                        <View className='flex items-center bg-gray-50 px-2 py-0.5 rounded-md mr-3 text-xs font-medium'>
                             <Text className='iconfont icon-wuliu mr-1 text-24px' />
                             运费按地区计算
                         </View>
                     )}
-                    <View className='flex items-center text-gray-400 text-xs mr-3'>
+                    <View className='flex items-center text-xs mr-3'>
                         <Text className='text-green-500 font-bold mr-1'>✓</Text> 极速发货
                     </View>
-                    <View className='flex items-center text-gray-400 text-xs'>
+                    <View className='flex items-center text-xs'>
                         <Text className='text-green-500 font-bold mr-1'>✓</Text> 售后无忧
                     </View>
                 </View>
