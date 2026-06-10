@@ -2,8 +2,10 @@ import { View, ScrollView, Button, Text } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import { getProducts } from '@/api/product'
+import { getProductCoupons } from '@/api/coupon'
 import SkuPopup from '@/components/SkuPopup'
 import { Image, HtmlRender } from '@/components'
+import { useRequest } from 'ahooks'
 
 export default function ProductDetail() {
     const router = useRouter()
@@ -14,6 +16,11 @@ export default function ProductDetail() {
     // 存储当前选中的具体 SKU 节点
     const [selectedSpec, setSelectedSpec] = useState<PRODUCT.SpecItem | null>(null)
     const [showSku, setShowSku] = useState(false)
+
+    const { data } = useRequest(() => {
+        return getProductCoupons(id)
+    })
+    console.log(data)
 
     useEffect(() => {
         if (id) fetchProduct()
