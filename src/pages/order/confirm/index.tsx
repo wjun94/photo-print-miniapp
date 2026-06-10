@@ -29,7 +29,6 @@ export default function ConfirmOrder() {
         if (router.params?.params) {
             try {
                 const decodedJson = JSON.parse(decodeURIComponent(router.params.params)) as FlattenedParams
-                console.log(JSON.stringify(decodedJson))
                 setBizParams(decodedJson)
             } catch (e) {
                 console.error('ConfirmOrder 路由参数解析失败:', e)
@@ -192,7 +191,7 @@ export default function ConfirmOrder() {
                                 <Text className='w-380px line-clamp-2 text-sm text-gray-800'>{item.productName || '定制商品'}</Text>
                                 <Text className='text-gray-500 text-sm font-medium'>x{item.totalQuantity}</Text>
                             </View>
-                            <View className='text-gray-400 text-xs mt-1'>规格：{item.specName || '默认'}</View>
+                            <View className='text-gray-400 text-xs mt-1'>{item.specName || '默认'}</View>
                             <View className='flex justify-between items-end mt-1'>
                                 <Text className='text-red-500 font-bold text-sm'>¥{item.price.toFixed(2)}</Text>
                                 <Text className='text-gray-400 text-xs'>小计：¥{item.totalSubtotal.toFixed(2)}</Text>
