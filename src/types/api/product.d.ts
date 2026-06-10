@@ -41,5 +41,6 @@ declare namespace PRODUCT {
     action: 'confirm' | 'upload' | string // 核心判断字段
     specAttributes: SpecAttribute[]
     specs: SpecItem[]
+    freeShippingAmount: number
   }
 }
