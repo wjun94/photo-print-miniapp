@@ -52,16 +52,26 @@ export default function ProductDetail() {
         }
     }
 
-    // 领取优惠券逻辑
-    const handleReceiveCoupon = async (couponId: string) => {
+    // 按钮动作统一分发：未领取则去领取，已领取则去使用
+    const handleCouponAction = async (coupon: any) => {
+        setBtnLoadingId(coupon.id)
+        // 如果已经是已领取状态，直接引导用户去使用（唤起 SKU 购买）
+        if (coupon.isReceived) {
+            setShowCouponPopup(false) // 关闭优惠券弹窗
+            setTimeout(() => {
+                setShowSku(true) // 顺畅过渡唤起 SKU 规格弹窗
+            }, 300)
+            return
+        }
+
+        // 未领取状态执行领券逻辑
         if (btnLoadingId) return
-        setBtnLoadingId(couponId)
         try {
-            await receiveCoupon(couponId)
+            await receiveCoupon(coupon.id)
             Taro.showToast({ title: '领取成功', icon: 'success' })
             // 动态更新本地状态
             setCoupons(prev =>
-                prev.map(item => item.id === couponId ? { ...item, isReceived: true } : item)
+                prev.map(item => item.id === coupon.id ? { ...item, isReceived: true } : item)
             )
         } catch (err: any) {
             Taro.showToast({ title: err?.message || '领取失败', icon: 'none' })
@@ -226,33 +236,36 @@ export default function ProductDetail() {
                 visible={showSku}
                 product={product}
                 selectedSpec={selectedSpec}
+                params={{ couponId: btnLoadingId }}
                 onClose={closeSkuPopup}
                 onConfirm={handleSpecConfirm}
             />
 
-            {/* 核心改动：使用通用的 BottomSheet 组件重构优惠券弹窗 */}
+            {/* 优惠券弹窗 */}
             <BottomSheet
                 visible={showCouponPopup}
                 title='优惠券明细'
                 onClose={() => setShowCouponPopup(false)}
-                enableDragClose={true} // 开启高级手势拖拽下滑关闭
-                contentClassName='max-h-[55vh]' // 约束最大高度，留出顶部空白及手势操作区
+                enableDragClose={true}
+                contentClassName='max-h-[55vh]'
             >
                 <View className='flex flex-col gap-3 pt-2 pb-68px'>
                     {coupons.map((coupon) => (
                         <View
                             key={coupon.id}
-                            className={`flex items-center justify-between border border-solid rounded-xl p-3 relative overflow-hidden ${coupon.isReceived ? 'bg-gray-50 border-gray-200' : 'bg-gradient-to-r from-red-50/50 to-orange-50/50 border-red-100'
+                            className={`flex items-center justify-between border border-solid rounded-xl p-3 relative overflow-hidden transition-all ${coupon.isReceived
+                                ? 'bg-orange-50/20 border-orange-200' // 已领取后，呈现温暖淡雅的“可使用”氛围调
+                                : 'bg-gradient-to-r from-red-50/50 to-orange-50/50 border-red-100'
                                 }`}
                         >
                             {/* 左侧金额与描述 */}
                             <View className='flex items-center pl-2'>
-                                <View className={`font-bold mr-4 flex items-baseline flex-shrink-0 ${coupon.isReceived ? 'text-gray-400' : 'text-red-500'}`}>
+                                <View className={`font-bold mr-4 flex items-baseline flex-shrink-0 ${coupon.isReceived ? 'text-orange-500' : 'text-red-500'}`}>
                                     <Text className='text-xs'>￥</Text>
                                     <Text className='text-2xl leading-none'>{coupon.reduceAmount}</Text>
                                 </View>
                                 <View className='flex flex-col'>
-                                    <Text className={`text-sm font-medium ${coupon.isReceived ? 'text-gray-400' : 'text-gray-800'}`}>
+                                    <Text className={`text-sm font-medium ${coupon.isReceived ? 'text-gray-700' : 'text-gray-800'}`}>
                                         {coupon.name}
                                     </Text>
                                     <Text className='text-xs text-gray-400 mt-1'>
@@ -261,16 +274,16 @@ export default function ProductDetail() {
                                 </View>
                             </View>
 
-                            {/* 右侧动作按钮 */}
+                            {/* 右侧动作按钮：始终可点 */}
                             <Button
-                                disabled={coupon.isReceived || btnLoadingId === coupon.id}
-                                onClick={() => handleReceiveCoupon(coupon.id)}
+                                disabled={btnLoadingId === coupon.id} // 仅在请求中禁用以防连击
+                                onClick={() => handleCouponAction(coupon)}
                                 className={`h-7 px-4 rounded-full text-xs font-medium flex items-center justify-center m-0 transition-all active:scale-95 border-none after:border-none flex-shrink-0 ${coupon.isReceived
-                                    ? 'bg-gray-200 text-gray-400'
-                                    : 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
+                                    ? 'bg-orange-500 text-white shadow-sm' // 已领取：亮眼的“立即使用”主色调按钮
+                                    : 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm' // 未领取：渐变色
                                     }`}
                             >
-                                {btnLoadingId === coupon.id ? '领取中...' : (coupon.isReceived ? '已领取' : '领取并使用')}
+                                {btnLoadingId === coupon.id ? '处理中...' : (coupon.isReceived ? '立即使用' : '立即领取')}
                             </Button>
                         </View>
                     ))}

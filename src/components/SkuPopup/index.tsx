@@ -7,12 +7,13 @@ import Taro from '@tarojs/taro'
 interface SkuPopupProps {
     visible: boolean
     product: PRODUCT.Detail
+    params?: { [key: string]: any }
     selectedSpec: PRODUCT.SpecItem | null // 支持外部传入默认选中的规格节点
     onClose: () => void
     onConfirm: (spec: PRODUCT.SpecItem, quantity: number) => void // 补全确认回调
 }
 
-export default function SkuPopup({ visible, product, selectedSpec, onClose, onConfirm }: SkuPopupProps) {
+export default function SkuPopup({ visible, params = {}, product, selectedSpec, onClose, onConfirm }: SkuPopupProps) {
     // 存储每一维规格选中的值。格式如：{ "颜色": "红色", "尺寸": "5寸" }
     const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>({})
     // 匹配到的最终单一 SKU 规格对象
@@ -118,11 +119,11 @@ export default function SkuPopup({ visible, product, selectedSpec, onClose, onCo
         // 4. 根据后端 action 字段执行不同的跳转策略
         if (product.action === 'upload') {
             Taro.navigateTo({
-                url: `/pages/order/upload/index?params=${encodeURIComponent(JSON.stringify(orderParams))}`
+                url: `/pages/order/upload/index?params=${encodeURIComponent(JSON.stringify({ ...orderParams, ...params }))}`
             })
         } else {
             Taro.navigateTo({
-                url: `/pages/order/confirm/index?params=${encodeURIComponent(JSON.stringify(orderParams))}`
+                url: `/pages/order/confirm/index?params=${encodeURIComponent(JSON.stringify({ ...orderParams, ...params }))}`
             })
         }
     }
