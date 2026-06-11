@@ -109,7 +109,7 @@ export default function Index() {
                 {/* 产品文字信息 */}
                 <View className='p-2 flex flex-col bg-white text-30px'>
                   <Text className='text-[#222222] line-clamp-2 overflow-hidden'>{item.name}</Text>
-                  <Text className='font-bold text-red-400 mt-1'><Text className="text-22px">￥</Text>{item.price}</Text>
+                  <Text className='font-bold text-red-400 text-28px mt-1'><Text className="text-22px">￥</Text>{item.price}<Text className='text-22px ml-2px'>{item.priceSuffix}</Text></Text>
                 </View>
               </View>
             )

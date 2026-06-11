@@ -24,7 +24,7 @@ export const getProductCoupons = (productId) => {
 // 领取优惠券
 export const receiveCoupon = (couponId: string, productId?: string) => {
   return request({
-    url: '/wx/coupon/receive',
+    url: '/coupon/receive',
     method: 'POST',
     data: { couponId, productId },
   });

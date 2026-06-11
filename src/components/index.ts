@@ -6,4 +6,5 @@ export { default as SkuPopup } from './SkuPopup'
 export { default as Modal } from './Modal'
 export { default as RegionPicker } from './RegionPicker'
 export { HtmlRender } from './HtmlRender'
+export { default as BottomSheet } from './BottomSheet'
 
