@@ -12,6 +12,7 @@ interface FlattenedParams {
     skuKey?: string
     quantity?: number // 普通购买来源
     price?: number
+    couponId?: string
     items?: ORDER.ItemRequest[] // 上传照片定制来源
 }
 
@@ -63,8 +64,7 @@ export default function ConfirmOrder() {
     const { data: previewData, loading: previewLoading } = useRequest(
         () => orderPreview({
             items: finalItems,
-            productId: bizParams?.productId,
-            specId: bizParams?.specId
+            ...bizParams,
         }),
         {
             // 只有当参数解析完毕，且组合出合法的 items 之后才去触发请求
@@ -94,8 +94,8 @@ export default function ConfirmOrder() {
                 Taro.showToast({ title: '订单数据丢失，请重新下单', icon: 'none' })
                 return Promise.reject('参数丢失')
             }
-
             return orderSubmit({
+                ...bizParams,
                 addressId: selectedAddress.id,
                 items: finalItems,
                 productId: bizParams.productId,
