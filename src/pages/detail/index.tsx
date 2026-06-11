@@ -23,7 +23,7 @@ export default function ProductDetail() {
     const [btnLoadingId, setBtnLoadingId] = useState<string | null>(null)
 
     // 获取优惠券列表
-    useRequest(() => getProductCoupons(id), {
+    const { refresh } = useRequest(() => getProductCoupons(id), {
         ready: !!id,
         onSuccess: (res) => {
             setCoupons(res || [])
@@ -58,7 +58,7 @@ export default function ProductDetail() {
 
         // 1. 已达上限状态，直接拦截
         if (status === 2) return
-        
+
         setBtnLoadingId(coupon.id)
 
         // 2. 状态1：可使用，引导用户去购买（唤起 SKU）
@@ -75,6 +75,7 @@ export default function ProductDetail() {
 
         try {
             await receiveCoupon(coupon.id)
+            refresh()
             Taro.showToast({ title: '领取成功', icon: 'success' })
 
             // 动态更新本地券状态为 1 (已领取可使用)
@@ -264,7 +265,6 @@ export default function ProductDetail() {
                 <View className='flex flex-col gap-3 pt-2 pb-68px'>
                     {coupons.map((coupon) => {
                         const status = coupon.status ?? (coupon.isReceived ? 1 : 0)
-                        const isLoading = btnLoadingId === coupon.id
 
                         // 1. 根据核心状态动态匹配卡片整体视觉背景
                         let cardClassName = 'bg-gradient-to-r from-red-50/50 to-orange-50/50 border-red-100'
@@ -281,25 +281,21 @@ export default function ProductDetail() {
                         let btnText = '立即领取'
                         let btnClassName = 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
 
-                        if (isLoading) {
-                            btnText = '加载中...'
-                            btnClassName = 'bg-gray-300 text-white cursor-not-allowed'
-                        } else {
-                            switch (status) {
-                                case 1:
-                                    btnText = '立即使用'
-                                    btnClassName = 'bg-orange-500 text-white shadow-sm'
-                                    break
-                                case 2:
-                                    btnText = '已达上限'
-                                    btnClassName = 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                    break
-                                case 0:
-                                default:
-                                    btnText = '立即领取'
-                                    btnClassName = 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
-                                    break
-                            }
+
+                        switch (status) {
+                            case 1:
+                                btnText = '立即使用'
+                                btnClassName = 'bg-orange-500 text-white shadow-sm'
+                                break
+                            case 2:
+                                btnText = '已达上限'
+                                btnClassName = 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                break
+                            case 0:
+                            default:
+                                btnText = '立即领取'
+                                btnClassName = 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
+                                break
                         }
 
                         return (
@@ -325,9 +321,9 @@ export default function ProductDetail() {
 
                                 {/* 右侧动作按钮 */}
                                 <Button
-                                    disabled={isLoading || status === 2}
+                                    disabled={status === 2}
                                     onClick={() => handleCouponAction(coupon)}
-                                    className={`h-7 px-4 rounded-full text-xs font-medium flex items-center justify-center m-0 transition-all border-none after:border-none flex-shrink-0 ${status !== 2 && !isLoading ? 'active:scale-95' : ''
+                                    className={`h-7 px-4 rounded-full text-xs font-medium flex items-center justify-center m-0 transition-all border-none after:border-none flex-shrink-0 ${status !== 2 && 'active:scale-95'
                                         } ${btnClassName}`}
                                 >
                                     {btnText}
