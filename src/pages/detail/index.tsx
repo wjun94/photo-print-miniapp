@@ -262,7 +262,7 @@ export default function ProductDetail() {
                 enableDragClose={true}
                 contentClassName='max-h-[55vh]'
             >
-                <View className='flex flex-col gap-3 pt-2 pb-68px'>
+                <View className='flex flex-col gap-3 pt-2 pb-68px min-h-30vh'>
                     {coupons.map((coupon) => {
                         const status = coupon.status ?? (coupon.isReceived ? 1 : 0)
 
