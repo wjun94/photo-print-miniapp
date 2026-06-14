@@ -50,7 +50,7 @@ declare namespace ORDER {
     updatedAt: string;
   };
   type Item = {
-    id: number;
+    id: string;
     orderNo: string;
     userId: number;
     status: Status;

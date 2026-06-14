@@ -1,10 +1,10 @@
-import request from "./request";
+import request from './request';
 
 /** 订单列表 */
 export const orderList = (data) => {
   return request<{ list: ORDER.Item[] }>({
-    url: "/orders/list",
-    method: "GET",
+    url: '/orders/list',
+    method: 'GET',
     data,
   });
 };
@@ -12,8 +12,17 @@ export const orderList = (data) => {
 /** 创建订单 */
 export const createOrder = (data) => {
   return request<{ id: number }>({
-    url: "/orders",
-    method: "POST",
+    url: '/orders',
+    method: 'POST',
+    data,
+  });
+};
+
+/** 订单支付 */
+export const payOrder = (data: { orderId: string }) => {
+  return request<{ id: number }>({
+    url: '/pay/order',
+    method: 'POST',
     data,
   });
 };
@@ -21,8 +30,8 @@ export const createOrder = (data) => {
 /** 取消订单 */
 export const cancelOrder = (data) => {
   return request<null>({
-    url: "/order/cancel",
-    method: "POST",
+    url: '/order/cancel',
+    method: 'POST',
     data,
   });
 };
@@ -30,8 +39,8 @@ export const cancelOrder = (data) => {
 /** 确认收货 */
 export const confirmOrder = (data) => {
   return request<null>({
-    url: "/order/confirm",
-    method: "POST",
+    url: '/order/confirm',
+    method: 'POST',
     data,
   });
 };
@@ -39,8 +48,8 @@ export const confirmOrder = (data) => {
 /** 支付成功 */
 export const paySuccess = (data) => {
   return request<null>({
-    url: "/order/pay/success",
-    method: "POST",
+    url: '/order/pay/success',
+    method: 'POST',
     data,
   });
 };
@@ -49,15 +58,15 @@ export const paySuccess = (data) => {
 export const getOrder = (id) => {
   return request({
     url: `/orders/${id}`,
-    method: "GET",
+    method: 'GET',
   });
 };
 
 /** 确认订单页面预览（获取商品信息、默认地址） */
 export const orderPreview = (data) => {
   return request<any>({
-    url: "/order/preview",
-    method: "POST",
+    url: '/order/preview',
+    method: 'POST',
     data,
   });
 };
@@ -65,8 +74,8 @@ export const orderPreview = (data) => {
 /** 提交订单 */
 export const orderSubmit = (data) => {
   return request<any>({
-    url: "/order/submit",
-    method: "POST",
+    url: '/order/submit',
+    method: 'POST',
     data,
   });
 };

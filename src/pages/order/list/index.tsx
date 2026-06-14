@@ -3,6 +3,7 @@ import Taro, { useDidShow } from '@tarojs/taro'
 import { useState, useCallback, useRef } from 'react'
 import { orderList, paySuccess, confirmOrder, cancelOrder } from '@/api/order'
 import { ScrollLoadList, Image, Modal, ScrollLoadListRef } from '@/components'
+import { onPay } from "@/utils/pay"
 
 // 弹窗类型定义
 type ModalType = 'pay' | 'cancel' | 'confirm' | null
@@ -16,7 +17,7 @@ export default function OrderList() {
   // 弹窗状态
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [modalType, setModalType] = useState<ModalType>(null)
-  const [currentOrderId, setCurrentOrderId] = useState<number | null>(null)
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null)
   // 加载状态，防止重复点击
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -53,12 +54,12 @@ export default function OrderList() {
     }
   }
 
-  const goToDetail = (id: number) => {
+  const goToDetail = (id: string) => {
     Taro.navigateTo({ url: `/pages/order/detail/index?id=${id}` })
   }
 
   // 打开弹窗通用方法
-  const openModal = useCallback((type: ModalType, orderId: number) => {
+  const openModal = useCallback((type: ModalType, orderId: string) => {
     setModalType(type)
     setCurrentOrderId(orderId)
     setModalVisible(true)
@@ -82,6 +83,7 @@ export default function OrderList() {
 
     try {
       setLoading(true)
+      await onPay(currentOrderId)
       await paySuccess({ orderid: currentOrderId })
       Taro.showToast({ title: '支付成功', icon: 'success' })
       closeModal()
@@ -178,7 +180,7 @@ export default function OrderList() {
             </Button>
             <Button
               className="py-2 px-4 mx-0 ml-2 rounded-full border-none bg-primary-400 text-white text-sm font-normal"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation()
                 openModal('pay', order.id)
               }}
