@@ -153,7 +153,7 @@ const OrderDetail = () => {
               value: `- ¥5.00`
             }, */
             {
-              label: '实付款',
+              label: '实付金额',
               value: `¥${order.actualAmount}`
             },].map(item => <View key={item.label} className='flex justify-between py-1'>
               <Text className='text-gray-600'>{item.label}</Text>

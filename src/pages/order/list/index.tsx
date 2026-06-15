@@ -1,7 +1,7 @@
 import { View, Text, Button } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { useState, useCallback, useRef } from 'react'
-import { orderList, paySuccess, confirmOrder, cancelOrder } from '@/api/order'
+import { orderList, confirmOrder, cancelOrder } from '@/api/order'
 import { ScrollLoadList, Image, Modal, ScrollLoadListRef } from '@/components'
 import { onPay } from "@/utils/pay"
 
@@ -84,7 +84,6 @@ export default function OrderList() {
     try {
       setLoading(true)
       await onPay(currentOrderId)
-      await paySuccess({ orderid: currentOrderId })
       Taro.showToast({ title: '支付成功', icon: 'success' })
       closeModal()
       refreshList()

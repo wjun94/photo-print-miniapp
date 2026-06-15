@@ -1,6 +1,6 @@
 import { View, Text, Button, Input } from '@tarojs/components'
 import { useEffect, useState } from 'react'
-import { Image } from '@/components'
+import { Image, BottomSheet } from '@/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { useRequest } from 'ahooks'
 import { orderPreview, orderSubmit } from '@/api/order'
@@ -16,6 +16,16 @@ interface FlattenedParams {
     items?: ORDER.ItemRequest[] // 上传照片定制来源
 }
 
+// 假设优惠券的数据结构
+interface CouponItem {
+    id: string
+    name: string
+    reduceAmount: number
+    fullAmount: number
+    status?: number // 0-可用/可领，1-已领/可使用，2-不可用
+    isReceived?: boolean
+}
+
 export default function ConfirmOrder() {
     const router = useRouter()
     const [selectedAddress, setSelectedAddress] = useState<ADDRESS.Items | null>(null)
@@ -24,6 +34,10 @@ export default function ConfirmOrder() {
     // 存储打平解码后的真实业务核心参数
     const [bizParams, setBizParams] = useState<FlattenedParams | null>(null)
     const [isInitialized, setIsInitialized] = useState(false)
+
+    // 优惠券相关状态
+    const [showCouponPopup, setShowCouponPopup] = useState(false)
+    const [selectedCoupon, setSelectedCoupon] = useState<CouponItem | null>(null)
 
     // 1. 核心解析逻辑：从 router.params.params 中解密数据
     useEffect(() => {
@@ -65,15 +79,24 @@ export default function ConfirmOrder() {
         () => orderPreview({
             items: finalItems,
             ...bizParams,
+            couponId: selectedCoupon?.id || '', // 动态覆盖/透传最新的优惠券ID
         }),
         {
             // 只有当参数解析完毕，且组合出合法的 items 之后才去触发请求
             ready: isInitialized && finalItems.length > 0,
-            refreshDeps: [bizParams], // 依赖 bizParams 的建立
+            refreshDeps: [bizParams, selectedCoupon?.id], // 依赖 bizParams 和 优惠券ID 的建立与切换
             onSuccess: (res) => {
                 // 初始化默认收货地址
-                if (res?.defaultAddress) {
+                if (res?.defaultAddress && !selectedAddress) {
                     setSelectedAddress(res.defaultAddress)
+                }
+                if (res?.coupons?.length) {
+                    setSelectedCoupon(res?.coupons[0])
+                }
+                // 如果后端在预览接口里返回了当前推荐/默认选中的优惠券，可以回显（取决于后端是否返回此字段）
+                if (res?.currentCouponId && !selectedCoupon) {
+                    // 假设 res 包含当前已应用券的标识
+                    setSelectedCoupon({ id: res.currentCouponId } as CouponItem)
                 }
             },
             onError: (err) => {
@@ -100,7 +123,8 @@ export default function ConfirmOrder() {
                 items: finalItems,
                 productId: bizParams.productId,
                 specId: bizParams.specId,
-                remark: remark.trim()
+                remark: remark.trim(),
+                couponId: selectedCoupon?.id || '' // 提交最终选中的优惠券
             })
         },
         {
@@ -139,11 +163,27 @@ export default function ConfirmOrder() {
         Taro.navigateTo({ url: `/pages/address/select/index?id=${selectedAddress?.id}` })
     }
 
+    // 优惠券选择点击事件处理
+    const handleCouponAction = (coupon: CouponItem) => {
+        setShowCouponPopup(false)
+        if (coupon?.id === selectedCoupon?.id) return;
+        setSelectedCoupon(coupon)
+    }
+
+    // 取消使用优惠券
+    /** const handleCancelCoupon = () => {
+        setSelectedCoupon(null)
+        setShowCouponPopup(false)
+    } */
+
     // 安全获取回显数据的默认值
     const previewList = previewData?.specs || []
     const totalAmount = previewData?.totalAmount || 0
     const freight = previewData?.freight || 0
     const actualAmount = previewData?.actualAmount || 0
+
+    // 使用接口数据并提供空数组兜底
+    const couponList: CouponItem[] = previewData?.coupons || []
 
     // 页面骨架或加载中状态
     if (previewLoading || !isInitialized) {
@@ -180,7 +220,6 @@ export default function ConfirmOrder() {
                 <View className='font-bold mb-2 text-gray-800 text-base'>商品信息</View>
                 {previewList.map((item, idx) => (
                     <View key={idx} className='flex py-3 border-b last:border-0 border-gray-100'>
-                        {/* 如果接口未返回单项图，降级回显业务原图 */}
                         <Image
                             src={item.imageUrl || bizParams?.items?.[idx]?.imageUrl || ''}
                             className='w-20 h-20 border border-solid border-gray-100 rounded-lg mr-3 bg-gray-50 flex-shrink-0'
@@ -216,11 +255,36 @@ export default function ConfirmOrder() {
                 </View>
             </View>
 
+            {/* 优惠券选择卡片入口 */}
+            <View
+                className='bg-white mx-4 mt-4 rounded-lg px-4 py-2 flex justify-between items-center text-sm'
+                onClick={() => setShowCouponPopup(true)}
+            >
+                <View className='flex items-center text-gray-800'>
+                    <Text className='iconfont icon-coupon text-red-500 mr-2 text-base' />
+                    <Text className='font-medium'>优惠券</Text>
+                </View>
+                <View className='flex items-center gap-1'>
+                    {selectedCoupon?.name ? (
+                        <Text>{selectedCoupon.name}</Text>
+                    ) : (
+                        <Text className='text-gray-400'>
+                            {couponList.length > 0 ? `${couponList.length}张可用` : '暂无可用优惠券'}
+                        </Text>
+                    )}
+                    <Text className='iconfont icon-next text-gray-400 text-24px' />
+                </View>
+            </View>
+
             {/* 金额汇总结算 */}
             <View className='bg-white mx-4 mt-4 rounded-lg p-4 text-sm text-gray-700'>
                 <View className='flex justify-between'>
                     <Text>商品金额</Text>
                     <Text className='font-medium text-gray-900'>¥{totalAmount.toFixed(2)}</Text>
+                </View>
+                <View className='flex justify-between mt-4'>
+                    <Text>优惠券</Text>
+                    <Text className='font-medium text-gray-900'>-¥{(previewData?.discountAmount || 0).toFixed(2)}</Text>
                 </View>
                 <View className='flex justify-between mt-4'>
                     <Text>运费</Text>
@@ -230,15 +294,13 @@ export default function ConfirmOrder() {
 
             {/* 底部固定结算操作栏 */}
             <View className='fixed bottom-0 left-0 right-0 h-100px bg-white flex items-center justify-between pl-4 z-30 box-border border-t border-gray-100'>
-                {/* 左侧实付款 */}
                 <View className='flex items-center text-sm text-gray-700'>
-                    <Text>实付款：</Text>
+                    <Text>实付金额：</Text>
                     <Text className='text-red-500 font-bold text-lg'>
                         ¥{actualAmount.toFixed(2)}
                     </Text>
                 </View>
 
-                {/* 右侧提交订单按钮 */}
                 <Button
                     className='bg-red-500 text-white text-base h-full px-8 flex items-center justify-center rounded-none m-0 border-none'
                     style={{ borderRadius: 0 }}
@@ -248,6 +310,114 @@ export default function ConfirmOrder() {
                     {submitLoading ? '提交中...' : '提交订单'}
                 </Button>
             </View>
+
+            {/* 优惠券明细弹窗 */}
+            <BottomSheet
+                visible={showCouponPopup}
+                title='优惠券明细'
+                onClose={() => setShowCouponPopup(false)}
+                enableDragClose={true}
+                contentClassName='max-h-[55vh]'
+            >
+                <View className='flex flex-col gap-3 pt-2 pb-68px min-h-30vh box-border'>
+                    {/* 无/不使用优惠券处理选项 */}
+                    {/* <View
+                        onClick={handleCancelCoupon}
+                        className={`flex items-center justify-between border border-solid rounded-xl p-4 transition-all bg-gray-50 ${!selectedCoupon ? 'border-red-500 bg-red-50/20' : 'border-gray-200'
+                            }`}
+                    >
+                        <Text className={`text-sm font-medium ${!selectedCoupon ? 'text-red-500' : 'text-gray-700'}`}>
+                            不使用优惠券
+                        </Text>
+                        <View className={`w-4 h-4 rounded-full border border-solid flex items-center justify-center ${!selectedCoupon ? 'border-red-500 bg-red-500' : 'border-gray-400'
+                            }`}>
+                            {!selectedCoupon && <View className='w-2 h-2 bg-white rounded-full' />}
+                        </View>
+                    </View> */}
+
+                    {/* 优惠券列表为空时的兜底提示 */}
+                    {couponList.length === 0 && (
+                        <View className='text-center py-10 text-gray-400 text-sm'>
+                            暂无符合当前订单使用的优惠券
+                        </View>
+                    )}
+
+                    {/* 循环渲染优惠券 */}
+                    {couponList.map((coupon) => {
+                        const status = coupon.status ?? (coupon.isReceived ? 1 : 0)
+
+                        // 1. 根据核心状态动态匹配卡片整体视觉背景
+                        let cardClassName = 'bg-gradient-to-r from-red-50/50 to-orange-50/50 border-red-100'
+                        let priceColorName = 'text-red-500'
+
+                        // 如果是当前正在使用的券，加上高亮描边
+                        const isCurrentActive = selectedCoupon?.id === coupon.id
+
+                        if (status === 1) {
+                            cardClassName = 'bg-orange-50/20 border-orange-200'
+                            priceColorName = 'text-orange-500'
+                        } else if (status === 2) {
+                            cardClassName = 'bg-gray-50 border-gray-200 opacity-70'
+                            priceColorName = 'text-gray-400'
+                        }
+
+                        if (isCurrentActive) {
+                            cardClassName += ' border-red-500 ring-1 ring-red-500'
+                        }
+
+                        // 2. 根据状态码及加载态，动态分配按钮文案与类名
+                        let btnText = '立即使用'
+                        let btnClassName = 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
+                        switch (status) {
+                            case 1:
+                                btnText = isCurrentActive ? '使用中' : '立即使用'
+                                btnClassName = isCurrentActive ? 'bg-red-500 text-white' : 'bg-orange-500 text-white shadow-sm'
+                                break
+                            case 2:
+                                btnText = '不可用'
+                                btnClassName = 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                break
+                            case 0:
+                            default:
+                                btnText = '立即领取'
+                                btnClassName = 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
+                                break
+                        }
+
+                        return (
+                            <View
+                                key={coupon.id}
+                                className={`flex items-center justify-between border border-solid rounded-xl p-3 relative overflow-hidden transition-all ${cardClassName}`}
+                            >
+                                {/* 左侧金额与描述 */}
+                                <View className='flex items-center pl-2'>
+                                    <View className={`font-bold mr-4 flex items-baseline flex-shrink-0 ${priceColorName}`}>
+                                        <Text className='text-xs'>￥</Text>
+                                        <Text className='text-2xl leading-none'>{coupon.reduceAmount}</Text>
+                                    </View>
+                                    <View className='flex flex-col'>
+                                        <Text className={`text-sm font-medium ${status === 2 ? 'text-gray-400 line-through' : status === 1 ? 'text-gray-700' : 'text-gray-800'}`}>
+                                            {coupon.name}
+                                        </Text>
+                                        <Text className='text-xs text-gray-400 mt-1'>
+                                            {coupon.fullAmount === 0 ? '无门槛券' : `满${coupon.fullAmount}元可用`}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                {/* 右侧动作按钮 */}
+                                <Button
+                                    onClick={() => handleCouponAction(coupon)}
+                                    className={`h-7 px-4 rounded-full text-xs font-medium flex items-center justify-center m-0 transition-all border-none after:border-none flex-shrink-0 ${status !== 2 && !isCurrentActive && 'active:scale-95'
+                                        } ${btnClassName}`}
+                                >
+                                    {btnText}
+                                </Button>
+                            </View>
+                        )
+                    })}
+                </View>
+            </BottomSheet>
         </View>
     )
 }
