@@ -3,7 +3,7 @@ import request from './request';
 /** 订单列表 */
 export const orderList = (data) => {
   return request<{ list: ORDER.Item[] }>({
-    url: '/orders/list',
+    url: '/order/list',
     method: 'GET',
     data,
   });
@@ -12,7 +12,7 @@ export const orderList = (data) => {
 /** 创建订单 */
 export const createOrder = (data) => {
   return request<{ id: number }>({
-    url: '/orders',
+    url: '/order',
     method: 'POST',
     data,
   });
@@ -57,7 +57,7 @@ export const paySuccess = (data) => {
 /** 订单详情 */
 export const getOrder = (id) => {
   return request({
-    url: `/orders/${id}`,
+    url: `/order/${id}`,
     method: 'GET',
   });
 };
