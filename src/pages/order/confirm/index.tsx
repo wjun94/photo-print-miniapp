@@ -24,6 +24,7 @@ interface CouponItem {
     fullAmount: number
     status?: number // 0-可用/可领，1-已领/可使用，2-不可用
     isReceived?: boolean
+    reason: string
 }
 
 export default function ConfirmOrder() {
@@ -165,6 +166,10 @@ export default function ConfirmOrder() {
 
     // 优惠券选择点击事件处理
     const handleCouponAction = (coupon: CouponItem) => {
+        if (coupon.status === 0) {
+            Taro.showToast({ title: coupon.reason, icon: 'none' })
+            return
+        }
         setShowCouponPopup(false)
         if (coupon?.id === selectedCoupon?.id) return;
         setSelectedCoupon(coupon)
@@ -352,8 +357,10 @@ export default function ConfirmOrder() {
 
                         // 如果是当前正在使用的券，加上高亮描边
                         const isCurrentActive = selectedCoupon?.id === coupon.id
-
-                        if (status === 1) {
+                        if (status === 0) {
+                            cardClassName = 'bg-gray-50/20 border-gray-200'
+                            priceColorName = 'text-gray-500'
+                        } else if (status === 1) {
                             cardClassName = 'bg-orange-50/20 border-orange-200'
                             priceColorName = 'text-orange-500'
                         } else if (status === 2) {
@@ -369,6 +376,10 @@ export default function ConfirmOrder() {
                         let btnText = '立即使用'
                         let btnClassName = 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
                         switch (status) {
+                            case 0:
+                                btnText = '不可使用'
+                                btnClassName = 'bg-gray-200 text-gray-400'
+                                break
                             case 1:
                                 btnText = isCurrentActive ? '使用中' : '立即使用'
                                 btnClassName = isCurrentActive ? 'bg-red-500 text-white' : 'bg-orange-500 text-white shadow-sm'
