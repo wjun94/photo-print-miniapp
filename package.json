@@ -75,6 +75,7 @@
     "@types/webpack-env": "^1.13.6",
     "ahooks": "^3.9.7",
     "babel-preset-taro": "4.2.0",
+    "dayjs": "^1.11.21",
     "dotenv": "^17.4.2",
     "dotenv-expand": "^13.0.0",
     "eslint": "^8.57.0",

@@ -5,6 +5,8 @@ export default defineAppConfig({
     'pages/index/index',
     // 商品详情
     'pages/detail/index',
+    // 优惠券列表
+    'pages/coupon/index',
     // 上传照片
     'pages/upload/index',
     // 收益管理

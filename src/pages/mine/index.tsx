@@ -46,6 +46,12 @@ export default function My() {
       fn: () => navigate('/pages/income/index')
     },
     {
+      id: 'coupon',
+      label: '优惠券',
+      icon: 'icon-coupon1',
+      fn: () => navigate('/pages/coupon/index')
+    },
+    {
       id: 'address',
       label: '地址管理',
       icon: 'icon-address',

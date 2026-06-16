@@ -21,6 +21,15 @@ export const getProductCoupons = (productId) => {
   });
 };
 
+/** 我的优惠券 */
+export const getCouponList = (data) => {
+  return request({
+    url: `/coupon/list`,
+    method: 'GET',
+    data
+  });
+};
+
 // 领取优惠券
 export const receiveCoupon = (couponId: string, productId?: string) => {
   return request({
