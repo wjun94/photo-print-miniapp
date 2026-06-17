@@ -58,6 +58,7 @@ declare namespace ORDER {
     createdAt: string;
     actualAmount: string;
     freight: string;
+    discountAmount: string
     amount: string;
     items?: OrderItem[];
     specs?: SpecsItem[];

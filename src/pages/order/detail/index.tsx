@@ -138,7 +138,7 @@ const OrderDetail = () => {
         </View>
 
         {/* 金额明细 */}
-        <View className='border-t mb-4 bg-white rounded-20px p-4'>
+        <View className='border-t mb-4 bg-white rounded-20px px-4 py-3'>
           {
             [{
               label: '商品金额',
@@ -148,10 +148,10 @@ const OrderDetail = () => {
               label: '运费',
               value: `¥${order.freight}`
             },
-            /* {
-              label: '优惠券',
-              value: `- ¥5.00`
-            }, */
+            {
+              label: '优惠金额',
+              value: `- ¥${order.discountAmount}`
+            },
             {
               label: '实付金额',
               value: `¥${order.actualAmount}`
