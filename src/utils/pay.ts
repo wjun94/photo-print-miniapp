@@ -16,7 +16,7 @@ export const launchOrderPayment = async (orderId: string) => {
         resolve(true);
       },
       fail(res) {
-        console.log('支付失败', res);
+        Taro.showToast({ title: '支付失败:' + res.errMsg, icon: 'none' });
         reject(false);
       },
     });

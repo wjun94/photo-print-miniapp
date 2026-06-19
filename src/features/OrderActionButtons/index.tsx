@@ -41,11 +41,8 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({ order, onRefres
     try {
       setLoading(true)
       await launchOrderPayment(order.id)
-      Taro.showToast({ title: '支付成功', icon: 'none' })
       closeModal()
       refreshList()
-    } catch (error) {
-      Taro.showToast({ title: '支付失败，请重试', icon: 'none' })
     } finally {
       setLoading(false)
     }

@@ -87,8 +87,6 @@ export default function OrderList() {
       Taro.showToast({ title: '支付成功', icon: 'success' })
       closeModal()
       refreshList()
-    } catch (error) {
-      Taro.showToast({ title: '支付失败，请重试', icon: 'error' })
     } finally {
       setLoading(false)
     }
