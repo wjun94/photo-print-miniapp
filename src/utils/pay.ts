@@ -1,8 +1,8 @@
 import { payOrder } from '@/api/order';
 import Taro from '@tarojs/taro';
 
-/** 订单支付 */
-export const onPay = async (orderId: string) => {
+/** 发起微信订单支付 */
+export const launchOrderPayment = async (orderId: string) => {
   return new Promise(async (resolve, reject) => {
     const payData: any = await payOrder({ orderId });
     await Taro.requestPayment({

@@ -3,7 +3,7 @@ import Taro, { useDidShow } from '@tarojs/taro'
 import { useState, useCallback, useRef } from 'react'
 import { orderList, confirmOrder, cancelOrder } from '@/api/order'
 import { ScrollLoadList, Image, Modal, ScrollLoadListRef } from '@/components'
-import { onPay } from "@/utils/pay"
+import { launchOrderPayment } from "@/utils/pay"
 
 // 弹窗类型定义
 type ModalType = 'pay' | 'cancel' | 'confirm' | null
@@ -83,7 +83,7 @@ export default function OrderList() {
 
     try {
       setLoading(true)
-      await onPay(currentOrderId)
+      await launchOrderPayment(currentOrderId)
       Taro.showToast({ title: '支付成功', icon: 'success' })
       closeModal()
       refreshList()

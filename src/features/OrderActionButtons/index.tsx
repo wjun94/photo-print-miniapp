@@ -3,12 +3,13 @@ import { View, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { Modal } from '@/components'
 import { useState, useCallback } from 'react'
-import { paySuccess, confirmOrder, cancelOrder } from '@/api/order'
+import { confirmOrder, cancelOrder } from '@/api/order'
+import { launchOrderPayment } from "@/utils/pay"
 
 // 定义 Props 类型
 interface OrderActionButtonsProps {
   order: {
-    id: number
+    id: string
     status: ORDER.Status
   }
   onRefresh?: () => void // 操作成功后通知外部刷新数据
@@ -39,7 +40,7 @@ const OrderActionButtons: React.FC<OrderActionButtonsProps> = ({ order, onRefres
     if (!order.id || loading) return
     try {
       setLoading(true)
-      await paySuccess({ orderid: order.id })
+      await launchOrderPayment(order.id)
       Taro.showToast({ title: '支付成功', icon: 'none' })
       closeModal()
       refreshList()
