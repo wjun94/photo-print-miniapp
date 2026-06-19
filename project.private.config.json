@@ -7,13 +7,6 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/detail/index",
-          "pathName": "pages/detail/index",
-          "query": "id=2067912578692026368",
-          "scene": null,
-          "launchMode": "default"
-        },
-        {
           "name": "pages/order/confirm/index",
           "pathName": "pages/order/confirm/index",
           "query": "params={\"productId\":\"2066178222638239744\",\"specId\":\"2066178222646628353\",\"skuKey\":\"颜色:标准\",\"quantity\":12,\"price\":1,\"couponId\":null}",

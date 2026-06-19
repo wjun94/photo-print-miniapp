@@ -3,49 +3,51 @@ import { useState, useEffect } from 'react'
 import { Image } from '@/components'
 import Taro from '@tarojs/taro'
 
-// 修正：补全 Props 接口定义，保证与 detail.tsx 的调用完全匹配
 interface SkuPopupProps {
     visible: boolean
     product: PRODUCT.Detail
     params?: { [key: string]: any }
-    selectedSpec: PRODUCT.SpecItem | null // 支持外部传入默认选中的规格节点
+    selectedSpec: PRODUCT.SpecItem | null
+    selectedQuantity?: number
     onClose: () => void
-    onConfirm: (spec: PRODUCT.SpecItem, quantity: number) => void // 补全确认回调
+    onConfirm: (spec: PRODUCT.SpecItem, quantity: number) => void
 }
 
-export default function SkuPopup({ visible, params = {}, product, selectedSpec, onClose, onConfirm }: SkuPopupProps) {
-    // 存储每一维规格选中的值。格式如：{ "颜色": "红色", "尺寸": "5寸" }
+export default function SkuPopup({
+    visible,
+    params = {},
+    product,
+    selectedSpec,
+    selectedQuantity = 1,
+    onClose,
+    onConfirm
+}: SkuPopupProps) {
     const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>({})
-    // 匹配到的最终单一 SKU 规格对象
     const [currentSpec, setCurrentSpec] = useState<PRODUCT.SpecItem | null>(selectedSpec)
-    // 购买数量
-    const [quantity, setQuantity] = useState(1)
+    const [quantity, setQuantity] = useState(selectedQuantity)
 
-    // 当弹窗打开或外部选中的商品/规格改变时，执行状态联动与初始化
+    // 监听外部选中的规格改变
     useEffect(() => {
-        if (visible) {
-            if (selectedSpec) {
-                // 如果外部已经有选中的规格（例如详情页默认选中的那项），则反向高亮规格按钮
-                setSelectedAttrs(selectedSpec.attributes)
-                setCurrentSpec(selectedSpec)
-            } else {
-                // 如果没有，清空所有选择状态
-                setSelectedAttrs({})
-                setCurrentSpec(null)
-            }
-            setQuantity(1)
+        if (selectedSpec) {
+            setSelectedAttrs(selectedSpec.attributes)
+            setCurrentSpec(selectedSpec)
+        } else {
+            setSelectedAttrs({})
+            setCurrentSpec(null)
         }
-    }, [visible, product, selectedSpec])
+    }, [selectedSpec])
+
+    // 监听外部传入的购买数量改变
+    useEffect(() => {
+        setQuantity(selectedQuantity)
+    }, [selectedQuantity])
 
     // 每次选中的属性改变时，自动匹配对应的具体 SKU
     useEffect(() => {
         const { specAttributes, specs } = product
-
-        // 只有当用户把所有维度的规格都选齐了，才去匹配 specs
         const isAllSelected = specAttributes.every(attr => selectedAttrs[attr.name])
 
         if (isAllSelected) {
-            // 在 specs 数组中寻找 attributes 完全匹配的那个 SKU
             const matchedSpec = specs.find(spec => {
                 return specAttributes.every(attr => spec.attributes[attr.name] === selectedAttrs[attr.name])
             })
@@ -61,7 +63,7 @@ export default function SkuPopup({ visible, params = {}, product, selectedSpec, 
     const handleAttrSelect = (attrName: string, value: string) => {
         setSelectedAttrs(prev => ({
             ...prev,
-            [attrName]: prev[attrName] === value ? '' : value // 反选逻辑：如果点的是已选中的，则取消选中
+            [attrName]: prev[attrName] === value ? '' : value
         }))
     }
 
@@ -85,13 +87,11 @@ export default function SkuPopup({ visible, params = {}, product, selectedSpec, 
 
     // 点击确定按钮
     const handleConfirm = () => {
-        // 1. 校验是否选齐了规格
         if (product.specAttributes.length > 0 && !currentSpec) {
             Taro.showToast({ title: '请选择完整规格', icon: 'none' })
             return
         }
 
-        // 2. 如果是 confirm 模式，校验库存
         if (product.action === 'confirm' && currentSpec && quantity > currentSpec.stock) {
             Taro.showToast({ title: '数量超过库存', icon: 'none' })
             return
@@ -99,7 +99,6 @@ export default function SkuPopup({ visible, params = {}, product, selectedSpec, 
 
         const finalQuantity = product.action === 'upload' ? 1 : quantity
 
-        // 3. 构建传递给下一个页面的业务数据
         const orderParams = {
             productId: product.id,
             specId: currentSpec?.id || '',
@@ -108,15 +107,12 @@ export default function SkuPopup({ visible, params = {}, product, selectedSpec, 
             price: currentSpec ? currentSpec.price : 0
         }
 
-        // 执行父组件传递过来的状态更新回调
         if (currentSpec) {
             onConfirm(currentSpec, finalQuantity)
         }
 
-        // 关闭当前弹窗
         onClose()
 
-        // 4. 根据后端 action 字段执行不同的跳转策略
         if (product.action === 'upload') {
             Taro.navigateTo({
                 url: `/pages/order/upload/index?params=${encodeURIComponent(JSON.stringify({ ...orderParams, ...params }))}`
@@ -137,12 +133,16 @@ export default function SkuPopup({ visible, params = {}, product, selectedSpec, 
         .map(attr => selectedAttrs[attr.name] || `请选择${attr.name}`)
         .join(' ')
 
+    // 【核心新增】核心判空与库存校验逻辑：
+    // 当选齐了 SKU 节点时，若整个 SKU 库存为 0，或当前选择的 quantity 大于该 SKU 的实际库存，则判定为库存不足
+    const isStockInsufficient = !!currentSpec && (currentSpec.stock <= 0 || quantity > currentSpec.stock)
+
     return (
         <>
             {/* 遮罩层 */}
             <View catchMove className='fixed inset-0 bg-black bg-opacity-50 z-40' onClick={onClose} />
 
-            {/* 弹出内容区 - 添加了 min-h-[40vh] 确保容器最低占屏幕 40% 的高度，并使用 flex 布局撑开底部按钮 */}
+            {/* 弹出内容区 */}
             <View catchMove className='fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 p-4 pb-6 animate-slide-up min-h-[40vh] flex flex-col justify-between'>
 
                 {/* 上半部分内容区域 */}
@@ -215,12 +215,18 @@ export default function SkuPopup({ visible, params = {}, product, selectedSpec, 
                         </View>
                     )}
 
-                    {/* 4. 底部提交按钮 - 保持动态文案判断 */}
+                    {/* 4. 底部提交按钮 - 【修改】动态控制置灰态、禁用状态与按钮文案 */}
                     <Button
-                        className='bg-red-500 text-white rounded-full w-full py-2 text-base font-medium border-none'
+                        disabled={isStockInsufficient}
+                        className={`rounded-full w-full py-2 text-base font-medium border-none transition-all ${isStockInsufficient
+                                ? 'bg-gray-300 text-gray-400 cursor-not-allowed'
+                                : 'bg-red-500 text-white active:opacity-90'
+                            }`}
                         onClick={handleConfirm}
                     >
-                        {product.action === 'upload' ? '去上传照片' : '立即购买'}
+                        {isStockInsufficient
+                            ? '库存不足'
+                            : (product.action === 'upload' ? '去上传照片' : '立即购买')}
                     </Button>
                 </View>
             </View>

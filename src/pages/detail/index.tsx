@@ -15,6 +15,8 @@ export default function ProductDetail() {
 
     // 存储当前选中的具体 SKU 节点
     const [selectedSpec, setSelectedSpec] = useState<PRODUCT.SpecItem | null>(null)
+    // 【新增】在父组件维护选中的购买数量状态
+    const [selectedQuantity, setSelectedQuantity] = useState<number>(1)
     const [showSku, setShowSku] = useState(false)
 
     // 优惠券相关状态
@@ -100,15 +102,16 @@ export default function ProductDetail() {
     // 规格确认回调
     const handleSpecConfirm = (spec: PRODUCT.SpecItem, quantity: number) => {
         setSelectedSpec(spec)
+        setSelectedQuantity(quantity) // 【修改】确认后，同步父组件中的购买数量
         closeSkuPopup()
     }
 
     if (loading) return <View className='flex justify-center items-center h-screen text-gray-500 text-sm'>加载中...</View>
     if (!product) return <View className='text-center mt-10 text-gray-500 text-sm'>商品不存在</View>
 
-    // 将选中的多维规格 attributes 转换为可读文本
+    // 将选中的多维规格 attributes 转换为可读文本（追加展示购买数量）
     const selectedSpecText = selectedSpec
-        ? Object.entries(selectedSpec.attributes).map(([_, v]) => v).join(' / ')
+        ? `${Object.entries(selectedSpec.attributes).map(([_, v]) => v).join(' / ')}，${selectedQuantity}件`
         : '请选择规格'
 
     // 提取满额包邮边界值
@@ -200,7 +203,7 @@ export default function ProductDetail() {
                     <View className='flex items-center flex-1 overflow-hidden gap-2 pl-2'>
                         {coupons.slice(0, 2).map(coupon => {
                             const status = coupon.status ?? (coupon.isReceived ? 1 : 0)
-                            const isHandled = status === 1 || status === 2 // 已领取或达上限呈现非高亮状态
+                            const isHandled = status === 1 || status === 2
                             return (
                                 <View
                                     key={coupon.id}
@@ -253,6 +256,7 @@ export default function ProductDetail() {
                 visible={showSku}
                 product={product}
                 selectedSpec={selectedSpec}
+                selectedQuantity={selectedQuantity} // 【修改】传递给子组件
                 params={{ couponId: btnLoadingId }}
                 onClose={closeSkuPopup}
                 onConfirm={handleSpecConfirm}
@@ -270,7 +274,6 @@ export default function ProductDetail() {
                     {coupons.map((coupon) => {
                         const status = coupon.status ?? (coupon.isReceived ? 1 : 0)
 
-                        // 1. 根据核心状态动态匹配卡片整体视觉背景
                         let cardClassName = 'bg-gradient-to-r from-red-50/50 to-orange-50/50 border-red-100'
                         let priceColorName = 'text-red-500'
                         if (status === 1) {
@@ -281,10 +284,8 @@ export default function ProductDetail() {
                             priceColorName = 'text-gray-400'
                         }
 
-                        // 2. 根据状态码及加载态，动态分配按钮文案与类名
                         let btnText = '立即领取'
                         let btnClassName = 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-sm'
-
 
                         switch (status) {
                             case 1:
@@ -307,7 +308,6 @@ export default function ProductDetail() {
                                 key={coupon.id}
                                 className={`flex items-center justify-between border border-solid rounded-xl p-3 relative overflow-hidden transition-all ${cardClassName}`}
                             >
-                                {/* 左侧金额与描述 */}
                                 <View className='flex items-center pl-2'>
                                     <View className={`font-bold mr-4 flex items-baseline flex-shrink-0 ${priceColorName}`}>
                                         <Text className='text-xs'>￥</Text>
@@ -323,7 +323,6 @@ export default function ProductDetail() {
                                     </View>
                                 </View>
 
-                                {/* 右侧动作按钮 */}
                                 <Button
                                     disabled={status === 2}
                                     onClick={() => handleCouponAction(coupon)}
