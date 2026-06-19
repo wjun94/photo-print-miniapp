@@ -42,5 +42,7 @@ declare namespace PRODUCT {
     specAttributes: SpecAttribute[]
     specs: SpecItem[]
     freeShippingAmount: number
+    minPrice: number
+    maxPrice: number
   }
 }

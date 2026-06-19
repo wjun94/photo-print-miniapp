@@ -106,8 +106,6 @@ export default function ProductDetail() {
     if (loading) return <View className='flex justify-center items-center h-screen text-gray-500 text-sm'>加载中...</View>
     if (!product) return <View className='text-center mt-10 text-gray-500 text-sm'>商品不存在</View>
 
-    const currentPrice = selectedSpec ? selectedSpec.price : (product.specs[0]?.price || 0)
-
     // 将选中的多维规格 attributes 转换为可读文本
     const selectedSpecText = selectedSpec
         ? Object.entries(selectedSpec.attributes).map(([_, v]) => v).join(' / ')
@@ -136,9 +134,15 @@ export default function ProductDetail() {
             <View className='bg-white p-4 shadow-sm'>
                 {/* 价格与销售数据行 */}
                 <View className='flex justify-between items-baseline mb-2'>
-                    <View className='text-red-500 text-3xl font-bold'>
-                        <Text className='text-xl mr-0.5'>¥</Text>
-                        {currentPrice.toFixed(2)}
+                    <View className='flex items-center'>
+                        <View className='text-red-500 text-3xl font-bold'>
+                            <Text className='text-xl mr-0.5'>¥</Text>
+                            {product?.minPrice.toFixed(2)}
+                        </View>
+                        {product?.maxPrice ? <View className='text-red-500 text-3xl font-bold'>
+                            -<Text className='text-xl mr-0.5'>¥</Text>
+                            {product?.maxPrice.toFixed(2)}
+                        </View> : null}
                     </View>
                     <View className='text-gray-400 text-xs'>
                         已售 {Math.floor(Math.random() * 100) + 50} 件
