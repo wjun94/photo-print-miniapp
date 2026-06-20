@@ -1,6 +1,6 @@
 import { View, ScrollView, Button, Text } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { getProducts } from '@/api/product'
 import { getProductCoupons, receiveCoupon } from '@/api/coupon'
 import SkuPopup from '@/components/SkuPopup'
@@ -101,18 +101,13 @@ export default function ProductDetail() {
 
     // 规格确认回调
     const handleSpecConfirm = (spec: PRODUCT.SpecItem, quantity: number) => {
-        setSelectedSpec(spec)
+        setSelectedSpec({ ...spec })
         setSelectedQuantity(quantity) // 【修改】确认后，同步父组件中的购买数量
         closeSkuPopup()
     }
 
     if (loading) return <View className='flex justify-center items-center h-screen text-gray-500 text-sm'>加载中...</View>
     if (!product) return <View className='text-center mt-10 text-gray-500 text-sm'>商品不存在</View>
-
-    // 将选中的多维规格 attributes 转换为可读文本（追加展示购买数量）
-    const selectedSpecText = selectedSpec
-        ? `${Object.entries(selectedSpec.attributes).map(([_, v]) => v).join(' / ')}，${selectedQuantity}件`
-        : '请选择规格'
 
     // 提取满额包邮边界值
     const freeShippingMinAmount = product.freeShippingAmount
@@ -228,9 +223,6 @@ export default function ProductDetail() {
             <View className='bg-white p-4 mt-2 flex justify-between items-center active:bg-gray-50' onClick={openSkuPopup}>
                 <View className='text-gray-800 text-sm font-medium w-16 flex-shrink-0'>选择规格</View>
                 <View className='flex items-center flex-1 justify-end pr-1 text-sm overflow-hidden'>
-                    <View className={`line-clamp-1 ${selectedSpec ? 'text-gray-800' : 'text-gray-400'}`}>
-                        {selectedSpecText}
-                    </View>
                     <Text className="iconfont icon-next ml-2 text-gray-400 text-xs" />
                 </View>
             </View>
