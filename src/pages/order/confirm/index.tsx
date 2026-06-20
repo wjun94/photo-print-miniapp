@@ -4,6 +4,7 @@ import { Image, BottomSheet } from '@/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { useRequest } from 'ahooks'
 import { orderPreview, orderSubmit } from '@/api/order'
+import { launchOrderPayment } from "@/utils/pay"
 
 // 定义统一的解包后的参数结构
 interface FlattenedParams {
@@ -130,11 +131,14 @@ export default function ConfirmOrder() {
         },
         {
             manual: true, // 手动点击触发
-            onSuccess: (res) => {
-                Taro.showToast({ title: '下单成功', icon: 'success' })
-                setTimeout(() => {
-                    Taro.redirectTo({ url: `/pages/order/detail/index?id=${res.orderId}` })
-                }, 1500)
+            onSuccess: async (res) => {
+                try {
+                    await launchOrderPayment(res.orderId)
+                } finally {
+                    setTimeout(() => {
+                        Taro.redirectTo({ url: `/pages/order/detail/index?id=${res.orderId}` })
+                    }, 1500)
+                }
             }
         }
     )

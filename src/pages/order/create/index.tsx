@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createOrder } from '@/api/order'
 import { SPECS, PRICES } from '@/constants'
 import { Image } from '@/components'
+import { launchOrderPayment } from "@/utils/pay"
 
 interface OrderPhotoItem {
   imageUrl: string
@@ -51,21 +52,21 @@ export default function CreateOrder() {
       return
     }
     setSubmitting(true)
+    const orderItems: ORDER.CreateItem[] = items.map(item => ({
+      imageUrl: item.imageUrl,
+      spec: item.spec,
+      quantity: item.quantity,
+      price: item.price
+    }))
+    const order = await createOrder({ address, items: orderItems })
     try {
-      const orderItems: ORDER.CreateItem[] = items.map(item => ({
-        imageUrl: item.imageUrl,
-        spec: item.spec,
-        quantity: item.quantity,
-        price: item.price
-      }))
-      const order = await createOrder({ address, items: orderItems })
-      Taro.showToast({ title: '下单成功', icon: 'success' })
-      setTimeout(() => {
-        Taro.redirectTo({ url: `/pages/order/detail/index?id=${order.id}` })
-      }, 1500)
+      await launchOrderPayment(order.id)
     } catch (err) {
       // error handled in request
     } finally {
+      setTimeout(() => {
+        Taro.redirectTo({ url: `/pages/order/detail/index?id=${order.id}` })
+      }, 1500)
       setSubmitting(false)
     }
   }

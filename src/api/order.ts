@@ -11,7 +11,7 @@ export const orderList = (data) => {
 
 /** 创建订单 */
 export const createOrder = (data) => {
-  return request<{ id: number }>({
+  return request<{ id: string }>({
     url: '/order',
     method: 'POST',
     data,
