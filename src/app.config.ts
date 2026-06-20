@@ -47,12 +47,12 @@ export default defineAppConfig({
         iconPath: imgUrl + 'home.png',
         selectedIconPath: imgUrl + 'home1.png',
       },
-      {
+      /* {
         pagePath: 'pages/order/list/index', // 订单页面路径
         text: '订单',
         iconPath: imgUrl + 'order.png',
         selectedIconPath: imgUrl + 'order1.png',
-      },
+      }, */
       {
         pagePath: 'pages/mine/index', // 我的页面路径
         text: '我的',

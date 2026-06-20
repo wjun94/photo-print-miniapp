@@ -31,8 +31,8 @@ export default function My() {
 
   // 订单状态分类数据
   const orderStates = [
-    { id: 'unpaid', label: '待付款', icon: 'icon-unpaid' },
-    { id: 'printing', label: '待发货', icon: 'icon-printing' },
+    { id: 'pending', label: '待付款', icon: 'icon-unpaid' },
+    { id: 'paid', label: '待发货', icon: 'icon-printing' },
     { id: 'shipped', label: '已发货', icon: 'icon-shipped' },
     { id: 'completed', label: '已完成', icon: 'icon-completed' },
   ]

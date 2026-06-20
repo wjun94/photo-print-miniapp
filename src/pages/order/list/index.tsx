@@ -1,5 +1,5 @@
 import { View, Text, Button } from '@tarojs/components'
-import Taro, { useDidShow } from '@tarojs/taro'
+import Taro, { useDidShow, useRouter } from '@tarojs/taro'
 import { useState, useCallback, useRef } from 'react'
 import { orderList, confirmOrder, cancelOrder } from '@/api/order'
 import { ScrollLoadList, Image, Modal, ScrollLoadListRef } from '@/components'
@@ -9,9 +9,10 @@ import { launchOrderPayment } from "@/utils/pay"
 type ModalType = 'pay' | 'cancel' | 'confirm' | null
 
 export default function OrderList() {
+  const { params: { status } } = useRouter()
   const listRef = useRef<ScrollLoadListRef>()
   // 当前选中的 Tab 状态
-  const [currentStatus, setCurrentStatus] = useState<string>('all')
+  const [currentStatus, setCurrentStatus] = useState<string>(status || 'all')
   // 列表刷新key，操作成功后递增强制刷新
   const [refreshKey, setRefreshKey] = useState<number>(0)
   // 弹窗状态
