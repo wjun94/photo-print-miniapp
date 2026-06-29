@@ -1,6 +1,6 @@
 import { View, ScrollView, Button, Text } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { getProducts } from '@/api/product'
 import { getProductCoupons, receiveCoupon } from '@/api/coupon'
 import SkuPopup from '@/components/SkuPopup'

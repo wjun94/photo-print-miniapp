@@ -52,7 +52,7 @@ export default function Index() {
       <View className='grid grid-cols-2 gap-3 px-4 mt-5'>
         {/* 左侧：上传照片 */}
         <View
-          onClick={() => navigate('/pages/upload/index')}
+          onClick={() => navigate('/pages/external/index')}
           className='flex items-center flex-col justify-between p-4 rounded-2xl bg-[#5aa6f9] text-white active:opacity-90'
         >
           <Text className='iconfont icon-camera-fill !text-60px opacity-90' />
